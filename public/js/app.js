@@ -9,49 +9,71 @@ app.config(['$routeProvider', function ($routeProvider) {
 
 app.controller("LoginController", ['$scope', '$resource', '$rootScope', '$cookies', '$location',
   function ($scope, $resource, $rootScope, $cookies, $location){
-  $rootScope.currentUser = $cookies.getObject("currentUser");
-    if($rootScope.currentUser != null) $rootScope.startWebSocket();
+      $rootScope.currentUser = $cookies.getObject("currentUser");
 
-    var Login = $resource("http://localhost:3000/users/login");
+      var Login = $resource("http://localhost:3000/users/login");
 
-    $scope.login = new Login();
+      $scope.login = new Login();
 
-    $scope.envoyer = function() {
+      $scope.envoyer = function() {
 
-      $scope.login.$save(function(){
-        $rootScope.currentUser = $scope.login;
+          $scope.login.$save(function(result){
 
-        var dt = new Date();
-        dt.setMinutes(dt.getMinutes() + 30);   
+            if(result.error == null){
+                $rootScope.currentUser = result;
 
-        $cookies.putObject("currentUser", $scope.login, {'expires': dt});
-        $location.path('#/home');
-        $rootScope.startWebSocket();
-      }).catch(function(req){
-        Notification.error({message: 'Identifiants incorrects.', positionY: 'bottom', positionX: 'right'});
-      });
+                var dt = new Date();
+                dt.setMinutes(dt.getMinutes() + 30);   
+
+                $cookies.putObject("currentUser", $scope.login, {'expires': dt});
+                $location.path('#/user');
+            }else{
+                console.log(result.error)
+            }
+        }).catch(function(req){
+            console.log("Erreur")
+        });
     }
 }]);
 
-app.controller("RegisterController", ['$scope', '$resource', '$rootScope', '$location', function ($scope, $resource, $rootScope, $location){
-  var Register = $resource("http://localhost:3000/users/register");
-  $scope.register = new Register();
+app.controller("RegisterController", ['$scope', '$resource', '$cookies', '$rootScope', '$location',
+   function ($scope, $resource, $cookies, $rootScope, $location){
 
-  $scope.envoyer = function() {
-      $scope.register.$save(function(){
-        $rootScope.currentUser = $scope.register;
+      var Register = $resource("http://localhost:3000/users/register");
+      $scope.register = new Register();
 
-        var dt = new Date();
-        dt.setMinutes(dt.getMinutes() + 30);  
+      $scope.envoyer = function() {
+        $scope.register.$save(function(result){
 
-        $cookies.putObject("currentUser", $scope.register, {'expires': dt});
-        $location.path('#/user');
-      }).catch(function(req){
-        Console.log("Erreur")
-      });
+            if(result.error == null){
+                $rootScope.currentUser = result;
+
+                var dt = new Date();
+                dt.setMinutes(dt.getMinutes() + 30);  
+
+                $cookies.putObject("currentUser", $scope.register, {'expires': dt});
+                $location.path('#/user');
+            }else{
+                console.log(result.error)
+            }
+
+        }).catch(function(req){
+            console.log("Une erreur s'est produite")
+        });
     }
 }]);
 
-app.controller("BarController", ['$scope', function ($scope){
-    
-}]);
+app.controller("BarController", ['$scope', '$rootScope', '$resource', '$location', '$cookies', 
+    function ($scope, $rootScope, $resource, $location, $cookies){
+
+        var Logout = $resource("http://localhost:3000/users/logout");
+
+        $scope.deconnexion = function(){
+            Logout.get();
+            console.log("deco");
+            $cookies.remove("currentUser");
+            $rootScope.currentUser = null;
+            $location.path('#/');
+        }
+
+    }]);

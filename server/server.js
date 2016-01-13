@@ -24,27 +24,36 @@ MongoClient.connect(url, function(err, db) {
 		app.post('/users/register', function(req, res) {
 			console.log(req.body.email+" "+req.body.password)
 
-			users.insert({email:req.body.email, password:req.body.password}, function(){
-				console.log("Insertion reussie")
+			if(req.body.password.length < 6) return res.json({error:"Mot de passe trop court"}).end()	
+			users.findOne({email:req.body.email}, function(err, user){
+
+				if(err) return;
+
+				if (user != null) res.json({error:"Ce compte existe déjà"}).end()	
+				else{
+					users.insert({email:req.body.email, password:req.body.password}, function(err, user){
+						res.json(user.ops[0]).end()
+					})
+				}
 			})
-			
-			res.send(req.body.email)
 		});
 
 		app.post('/users/login', function(req, res) {
 			users.findOne({email:req.body.email}, function(err, user){
-				if (user == null) res.status(404).end()
 
-				req.session.user = user
-				res.json(user)
-				console.log('Trouvé !')
+				if(err) return;
+
+				if (user == null) res.json({error:"Identifiants incorrects"}).end()
+				else{
+					req.session.user = user
+					res.json(user)
+				}	
 			})
 		});
 
 		app.get('/users/logout', function(req, res) {
-			console.log("requete : "+req.sessionID)
-			req.session.count++;
-			res.send("OK : "+req.session.count)
+			req.session.user = null
+			res.end()
 		});
 
 	})
