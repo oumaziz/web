@@ -3,6 +3,7 @@ var MongoClient = require("mongodb").MongoClient
 var bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser')
 var session = require('express-session')
+var md5 = require("md5")
 
 
 var url = "mongodb://localhost:27017/oumaziz_web"
@@ -31,7 +32,7 @@ MongoClient.connect(url, function(err, db) {
 
 				if (user != null) res.json({error:"Ce compte existe déjà"}).end()	
 				else{
-					users.insert({email:req.body.email, password:req.body.password}, function(err, user){
+					users.insert({email:req.body.email, password:md5(req.body.password)}, function(err, user){
 						res.json(user.ops[0]).end()
 					})
 				}
@@ -39,7 +40,7 @@ MongoClient.connect(url, function(err, db) {
 		});
 
 		app.post('/users/login', function(req, res) {
-			users.findOne({email:req.body.email}, function(err, user){
+			users.findOne({email:req.body.email, password:md5(req.body.password)}, function(err, user){
 
 				if(err) return;
 
