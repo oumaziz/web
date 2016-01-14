@@ -1,0 +1,10 @@
+<div class="col-md-6 col-md-offset-3" ng-controller="FriendsController" ng-hide="currentUser">
+  <br><br><br>
+<form class="form-signin" ng-submit="envoyer()">
+  <h2 class="form-signin-heading">Add a friend</h2>
+  <label for="inputEmail" class="sr-only">Email address</label>
+  <input type="email" id="inputEmail" ng-model="friends.email" class="form-control" placeholder="Email address" required autofocus>
+  <br>
+  <button class="btn btn-lg btn-primary btn-block" type="submit">ADD</button>
+</form>
+</div>
