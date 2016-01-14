@@ -64,7 +64,7 @@ MongoClient.connect(url, function(err, db) {
 				if (user == null) res.json({error:"Ce compte n'existe pas"}).end()
 					
 				else{
-					if (req.body.email != user.email) {
+					if (req.body.email != req.session.user.email) {
 
 						var CurrentUser = {
 							email : req.session.user.email,
