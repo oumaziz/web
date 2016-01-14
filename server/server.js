@@ -18,11 +18,6 @@ app.use(session({"secret": "RMratsy2T2SLpwMvqglnkleW43j40iKp"}))
 app.use(bodyParser.json()) 
 app.use(bodyParser.urlencoded({ extended: true })) 
 
-var User = new Schema({
-    email: String,
-    pseudo: String
-});
-
 MongoClient.connect(url, function(err, db) {
 	db.collection("users", function(err, users) {
 
@@ -72,35 +67,37 @@ MongoClient.connect(url, function(err, db) {
 					if (req.body.email != user.email) {
 
 						var CurrentUser = {
-							email : req.session.user.email;
-							pseudo : req.session.user.pseudo;
+							email : req.session.user.email,
+							pseudo : req.session.user.pseudo
 						}
 
 						var Friend = {
-							email : req.body.email;
-							pseudo : req.body.pseudo;
+							email : req.body.email,
+							pseudo : req.body.pseudo
 						}
 
 						db.collection("friends", function(err, friends) {
-						friends.findOne( { 
-							$or : [ 
-								{$and : [ { user : CurrentUser }, { friend : Friend } ]},
-								{$and : [ { user : Friend }, { friend : CurrentUser } ]}
-							] 
-						}, function(err, friend){
+							friends.findOne( { 
+								$or : [ 
+									{$and : [ { user : CurrentUser }, { friend : Friend } ]},
+									{$and : [ { user : Friend }, { friend : CurrentUser } ]}
+								] 
+							}, function(err, friend){
 
-						if(err) return;
+							if(err) return;
 
-						if (friend == null){
+							if (friend == null){
 
-							friends.insert({user:CurrentUser, friend:Friend}, function(err, friends){
-										console.log("Insertion ami reussie")
-										res.json(friends.ops[0]).end()
+								friends.insert({user:CurrentUser, friend:Friend}, function(err, friends){
+											console.log("Insertion ami reussie")
+											res.json(friends.ops[0]).end()
+								
 								})
-							})
-						}
+							}
 
-						else res.json({error:"Vous êtes déjà ami !"}).end()
+							else res.json({error:"Vous êtes déjà ami !"}).end()
+							})
+						})
 					
 					}
 
@@ -113,8 +110,8 @@ MongoClient.connect(url, function(err, db) {
 
 		app.get('/users/friends', function(req, res) {
 			var CurrentUser = {
-				email : req.session.user.email;
-				pseudo : req.session.user.pseudo;
+				email : req.session.user.email,
+				pseudo : req.session.user.pseudo
 			}
 
 			db.collection("friends", function(err, friends) {
@@ -122,6 +119,7 @@ MongoClient.connect(url, function(err, db) {
 				cursor.toArray(function(err, data) {
 					if (err) return next(err)
 					res.send(data)
+})
 			})
 		});
 		
