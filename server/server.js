@@ -57,6 +57,23 @@ MongoClient.connect(url, function(err, db) {
 			res.end()
 		});
 
+		app.post('/friends', function(req, res) {
+				users.findOne({email:req.body.email}, function(err, user){
+
+					if(err) return;
+
+					if (user == null) res.json({error:"Ce compte n'existe pas"}).end()
+				else{
+					db.collection("friends", function(err, friends) {
+					friends.insert({email:req.session.user.email, emailFriend:req.body.email}, function(err, friends){
+									console.log("Insertion ami reussie")
+								res.json(friends.ops[0]).end()
+						})
+					}
+				}
+			})
+		});
+
 	})
 
 	app.listen(3000, function() {
