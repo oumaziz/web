@@ -112,7 +112,17 @@ MongoClient.connect(url, function(err, db) {
 
 
 		app.get('/users/friends', function(req, res) {
-			
+			var CurrentUser = {
+				email : req.session.user.email;
+				pseudo : req.session.user.pseudo;
+			}
+
+			db.collection("friends", function(err, friends) {
+				var cursor = friends.find({$or : [ { user : CurrentUser }, { friend : CurrentUser } ]})
+				cursor.toArray(function(err, data) {
+					if (err) return next(err)
+					res.send(data)
+			})
 		});
 		
 
