@@ -4,7 +4,13 @@ app.config(['$routeProvider', function ($routeProvider) {
 	$routeProvider
     .when('/', {templateUrl: 'js/views/login.html', controller: 'LoginController'})
     .when('/register', {templateUrl: 'js/views/register.html', controller: 'RegisterController'})
+    .when('/friends', {templateUrl: 'js/views/friends.html', controller: 'FriendsController'})
     .otherwise({redirectTo: '/'});
+}]);
+
+app.controller("FriendsController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
+  function ($scope, $resource, $rootScope, $cookies, $location, Notification){
+
 }]);
 
 app.controller("LoginController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
@@ -26,7 +32,7 @@ app.controller("LoginController", ['$scope', '$resource', '$rootScope', '$cookie
                 dt.setMinutes(dt.getMinutes() + 30);   
 
                 $cookies.putObject("currentUser", $scope.login, {'expires': dt});
-                $location.path('#/user');
+                $location.path('/friends');
             }else{
                 Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
             }
