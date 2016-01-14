@@ -18,6 +18,10 @@ app.use(session({"secret": "RMratsy2T2SLpwMvqglnkleW43j40iKp"}))
 app.use(bodyParser.json()) 
 app.use(bodyParser.urlencoded({ extended: true })) 
 
+var User = new Schema({
+    email: String,
+    pseudo: String
+});
 
 MongoClient.connect(url, function(err, db) {
 	db.collection("users", function(err, users) {
@@ -58,22 +62,47 @@ MongoClient.connect(url, function(err, db) {
 		});
 
 		app.post('/users/friends', function(req, res) {
-				users.findOne({email:req.body.email}, function(err, user){
+			users.findOne({email:req.body.email}, function(err, user){
 
-					if(err) return;
+				if(err) return;
 
-					if (user == null) res.json({error:"Ce compte n'existe pas"}).end()
+				if (user == null) res.json({error:"Ce compte n'existe pas"}).end()
+					
 				else{
-					db.collection("friends", function(err, friends) {
-					friends.insert({email:req.session.user.email, emailFriend:req.body.email}, function(err, friends){
+					if (req.body.email != user) {
+
+						var CurrentUser = {
+							email : req.session.user.email;
+							pseudo : req.session.user.pseudo;
+						}
+
+						var Friend = {
+							email : req.body.email;
+							pseudo : req.body.pseudo;
+						}
+
+						db.collection("friends", function(err, friends) {
+						friends.insert({user:CurrentUser, friend:Friend}, function(err, friends){
 									console.log("Insertion ami reussie")
-								res.json(friends.ops[0]).end()
+									res.json(friends.ops[0]).end()
+							})
 						})
-						})
+						
 					}
+
+					else res.json({error:"Vous ne pouvez pas vous ajouter comme ami!"}).end()
+				}
 				
 			})
 		});
+
+	
+
+	
+		
+		
+	
+		
 
 	})
 
