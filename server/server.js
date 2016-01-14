@@ -69,8 +69,9 @@ MongoClient.connect(url, function(err, db) {
 									console.log("Insertion ami reussie")
 								res.json(friends.ops[0]).end()
 						})
+						})
 					}
-				}
+				
 			})
 		});
 
