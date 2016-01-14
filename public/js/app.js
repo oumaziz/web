@@ -10,7 +10,31 @@ app.config(['$routeProvider', function ($routeProvider) {
 
 app.controller("FriendsController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
   function ($scope, $resource, $rootScope, $cookies, $location, Notification){
+$rootScope.currentUser = $cookies.getObject("currentUser");
 
+      var Friends = $resource("http://localhost:3000/users/friends");
+
+      $scope.friends = new Friends();
+
+      $scope.envoyer = function() {
+
+          $scope.friends.$save(function(result){
+
+            if(result.error == null){
+                $rootScope.currentUser = result;
+
+                var dt = new Date();
+                dt.setMinutes(dt.getMinutes() + 30);   
+
+                $cookies.putObject("currentUser", $scope.friends, {'expires': dt});
+                $location.path('/friends');
+            }else{
+                Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
+            }
+        }).catch(function(req){
+            Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
+        });
+    }
 }]);
 
 app.controller("LoginController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
@@ -58,7 +82,7 @@ app.controller("RegisterController", ['$scope', '$resource', '$cookies', '$rootS
                 dt.setMinutes(dt.getMinutes() + 30);  
 
                 $cookies.putObject("currentUser", $scope.register, {'expires': dt});
-                $location.path('#/user');
+                $location.path('/friends');
             }else{
                 Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
             }
