@@ -112,46 +112,8 @@ MongoClient.connect(url, function(err, db) {
 
 
 		app.get('/users/friends', function(req, res) {
-			users.findOne({email:req.body.email}, function(err, user){
-
-				if(err) return;
-
-				if (user == null) res.json({error:"Ce compte n'existe pas"}).end()
-					
-				else{
-					if (req.body.email != user) {
-
-						var CurrentUser = {
-							email : req.session.user.email;
-							pseudo : req.session.user.pseudo;
-						}
-
-						var Friend = {
-							email : req.body.email;
-							pseudo : req.body.pseudo;
-						}
-
-						db.collection("friends", function(err, friends) {
-						friends.insert({user:CurrentUser, friend:Friend}, function(err, friends){
-									console.log("Insertion ami reussie")
-									res.json(friends.ops[0]).end()
-							})
-						})
-						
-					}
-
-					else res.json({error:"Vous ne pouvez pas vous ajouter comme ami!"}).end()
-				}
-				
-			})
+			
 		});
-
-	
-
-	
-		
-		
-	
 		
 
 	})
