@@ -57,7 +57,7 @@ MongoClient.connect(url, function(err, db) {
 			res.end()
 		});
 
-		app.post('/friends', function(req, res) {
+		app.post('/users/friends', function(req, res) {
 				users.findOne({email:req.body.email}, function(err, user){
 
 					if(err) return;
