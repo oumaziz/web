@@ -138,6 +138,40 @@ app.get('/users/friends', function(req, res) {
 		});
 
 	})
+	db.collection("groups", function(err, groups) {
+
+
+		app.get('/users/groups', function(req, res) {
+				var cursor = groups.find({membres: {$elemMatch: {email:req.session.user.email}}})
+				cursor.toArray(function(err, data) {
+					if (err) return next(err)
+			  		var tab=new Array()
+					var length = Object.keys(data).length; 
+					for (var i = 0; i <length; i++) 
+					{	
+						tab[i]= {}
+						tab[i].nameGroupe= data[i].nameGroupe;
+						tab[i].membres=new Array();
+					
+						if(data[i].membres.email != req.session.user.email)
+						tab[i].membres = data[i].membres.pseudo;    
+
+					}	
+					res.jsonp(tab)
+					})
+			
+		});
+
+		app.post('/users/groups', function(req, res) {
+			
+
+			groups.insert({nameGroupe:req.body.nameGroupe, membres:req.body.groups}, function(err, groups){
+											console.log("Insertion groupe reussie")
+											res.json(groups.ops[0]).end()
+					})
+			
+		});
+	})
 
 	app.listen(3000, function() {
 		console.log("Server running...")
