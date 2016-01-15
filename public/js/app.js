@@ -16,7 +16,7 @@ $rootScope.currentUser = $cookies.getObject("currentUser");
 
       $scope.friends = new Friends();
    
-	$scope.friends.$get(function(result){
+	Friends.query(function(result){
 
 		 $scope.Listefriends=result;
 	})
@@ -28,7 +28,10 @@ $rootScope.currentUser = $cookies.getObject("currentUser");
 
             if(result.error == null){
                 $rootScope.currentUser = result;
+Friends.query(function(result){
 
+		 $scope.Listefriends=result;
+	})
                 var dt = new Date();
                 dt.setMinutes(dt.getMinutes() + 30);   
 
