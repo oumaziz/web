@@ -78,12 +78,11 @@ MongoClient.connect(url, function(err, db) {
 							email : req.body.email,
 							pseudo : req.body.pseudo
 						}
-
 						db.collection("friends", function(err, friends) {
 							friends.findOne( { 
 								$or : [ 
-									{$and : [ { user : CurrentUser }, { friend : Friend } ]},
-									{$and : [ { user : Friend }, { friend : CurrentUser } ]}
+									{$and : [ { "user.email" : CurrentUser.email }, { "friend.email": Friend.email} ]},
+									{$and : [ { "friend.email" : CurrentUser.email }, { "user.email": Friend.email} ]}
 								] 
 							}, function(err, friend){
 
@@ -124,7 +123,7 @@ app.get('/users/friends', function(req, res) {
 				var cursor = friends.find({$or : [ { user : CurrentUser }, { friend : CurrentUser } ]})
 				cursor.toArray(function(err, data) {
 					if (err) return next(err)
-			  		var tab={}
+			  		var tab=new Array()
 					var length = Object.keys(data).length; 
 					for (var i = 0; i <length; i++) 
 					{
