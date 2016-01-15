@@ -2,54 +2,57 @@ var app = angular.module("expensesApp", ['ngRoute', 'ngCookies', 'ngResource', '
 
 app.config(['$routeProvider', function ($routeProvider) {
 	$routeProvider
-    .when('/', {templateUrl: 'js/views/login.html', controller: 'LoginController'})
     .when('/register', {templateUrl: 'js/views/register.html', controller: 'RegisterController'})
-    .when('/friends', {templateUrl: 'js/views/friends.html', controller: 'FriendsController'})
+    .when('/dashboard', {templateUrl: 'js/views/dashboard.html', controller: 'DashboardController'})
+    .when('/dashboard/friends', {templateUrl: 'js/views/friends.html', controller: 'FriendsController'})
+    .when('/', {templateUrl: 'js/views/login.html', controller: 'LoginController'})
     .otherwise({redirectTo: '/'});
+}]);
+
+app.controller("DashboardController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
+  function ($scope, $resource, $rootScope, $cookies, $location, Notification){
+
+    if($rootScope.currentUser == null) $location.path('/');
+
+    console.log("dans le dash")    
+
 }]);
 
 app.controller("FriendsController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
   function ($scope, $resource, $rootScope, $cookies, $location, Notification){
-$rootScope.currentUser = $cookies.getObject("currentUser");
 
-      var Friends = $resource("http://localhost:3000/users/friends");
+    var Friends = $resource("http://localhost:3000/users/friends");
 
-      $scope.friends = new Friends();
-   
-	Friends.query(function(result){
+    $scope.friends = new Friends();
 
-		 $scope.Listefriends=result;
-	})
-	
-      $scope.envoyer = function() {
+    Friends.query(function(result){
 
+        $scope.Listefriends = result;
+    })
 
-          $scope.friends.$save(function(result){
+    $scope.envoyer = function() {
 
-            if(result.error == null){
-                $rootScope.currentUser = result;
-Friends.query(function(result){
+      $scope.friends.$save(function(result){
 
-		 $scope.Listefriends=result;
-	})
-                var dt = new Date();
-                dt.setMinutes(dt.getMinutes() + 30);   
+        if(result.error == null){
+            Friends.query(function(result){
 
-                $cookies.putObject("currentUser", $scope.friends, {'expires': dt});
-                $location.path('/friends');
+               $scope.Listefriends=result;
+           })
 
-            }else{
-                Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
-            }
-        }).catch(function(req){
-            Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
-        });
-    }
+        }else{
+            Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
+        }
+    }).catch(function(req){
+        Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
+    });
+}
 }]);
 
 app.controller("LoginController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
   function ($scope, $resource, $rootScope, $cookies, $location, Notification){
-      $rootScope.currentUser = $cookies.getObject("currentUser");
+
+      if($rootScope.currentUser != null) $location.path('/dashboard');
 
       var Login = $resource("http://localhost:3000/users/login");
 
@@ -66,7 +69,7 @@ app.controller("LoginController", ['$scope', '$resource', '$rootScope', '$cookie
                 dt.setMinutes(dt.getMinutes() + 30);   
 
                 $cookies.putObject("currentUser", $scope.login, {'expires': dt});
-                $location.path('/friends');
+                $location.path('/dashboard');
             }else{
                 Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
             }
@@ -79,10 +82,12 @@ app.controller("LoginController", ['$scope', '$resource', '$rootScope', '$cookie
 app.controller("RegisterController", ['$scope', '$resource', '$cookies', '$rootScope', '$location', 'Notification',
    function ($scope, $resource, $cookies, $rootScope, $location, Notification){
 
-      var Register = $resource("http://localhost:3000/users/register");
-      $scope.register = new Register();
+    if($rootScope.currentUser != null) $location.path('/dashboard');
 
-      $scope.envoyer = function() {
+    var Register = $resource("http://localhost:3000/users/register");
+    $scope.register = new Register();
+
+    $scope.envoyer = function() {
         $scope.register.$save(function(result){
 
             if(result.error == null){
@@ -92,7 +97,7 @@ app.controller("RegisterController", ['$scope', '$resource', '$cookies', '$rootS
                 dt.setMinutes(dt.getMinutes() + 30);  
 
                 $cookies.putObject("currentUser", $scope.register, {'expires': dt});
-                $location.path('/friends');
+                $location.path('#/dashboard');
             }else{
                 Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
             }
@@ -105,6 +110,8 @@ app.controller("RegisterController", ['$scope', '$resource', '$cookies', '$rootS
 
 app.controller("BarController", ['$scope', '$rootScope', '$resource', '$location', '$cookies', 
     function ($scope, $rootScope, $resource, $location, $cookies){
+
+        $rootScope.currentUser = $cookies.getObject("currentUser");
 
         var Logout = $resource("http://localhost:3000/users/logout");
 
