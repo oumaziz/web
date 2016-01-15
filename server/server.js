@@ -22,16 +22,17 @@ MongoClient.connect(url, function(err, db) {
 	db.collection("users", function(err, users) {
 
 		app.post('/users/register', function(req, res) {
-			console.log(req.body.email+" "+req.body.password)
+			console.log(req.body.pseudo+" "+req.body.email+" "+req.body.password)
 
-			if(req.body.password.length < 6) return res.json({error:"Mot de passe trop court"}).end()	
+			if(req.body.password.length < 6) return res.json({error:"Mot de passe trop court"}).end()
+			if(req.body.pseudo.length < 6) return res.json({error:"Pseudo trop court"}).end()	
 			users.findOne({email:req.body.email}, function(err, user){
 
 				if(err) return;
 
 				if (user != null) res.json({error:"Ce compte existe déjà"}).end()	
 				else{
-					users.insert({email:req.body.email, password:md5(req.body.password)}, function(err, user){
+					users.insert({email:req.body.email, password:md5(req.body.password), pseudo:req.body.pseudo}, function(err, user){
 						res.json(user.ops[0]).end()
 					})
 				}
@@ -57,6 +58,8 @@ MongoClient.connect(url, function(err, db) {
 		});
 
 		app.post('/users/friends', function(req, res) {
+											
+		if (req.body.email != req.session.user.email) {
 			users.findOne({email:req.body.email}, function(err, user){
 
 				if(err) return;
@@ -64,7 +67,7 @@ MongoClient.connect(url, function(err, db) {
 				if (user == null) res.json({error:"Ce compte n'existe pas"}).end()
 					
 				else{
-					if (req.body.email != req.session.user.email) {
+					
 
 						var CurrentUser = {
 							email : req.session.user.email,
@@ -99,16 +102,19 @@ MongoClient.connect(url, function(err, db) {
 							})
 						})
 					
-					}
-
-					else res.json({error:"Vous ne pouvez pas vous ajouter comme ami !"}).end()
+					
 				}
 				
 			})
+			}
+
+			else res.json({error:"Vous ne pouvez pas vous ajouter comme ami !"}).end()
 		});
 
 
-		app.get('/users/friends', function(req, res) {
+		
+		
+app.get('/users/friends', function(req, res) {
 			var CurrentUser = {
 				email : req.session.user.email,
 				pseudo : req.session.user.pseudo
@@ -118,11 +124,19 @@ MongoClient.connect(url, function(err, db) {
 				var cursor = friends.find({$or : [ { user : CurrentUser }, { friend : CurrentUser } ]})
 				cursor.toArray(function(err, data) {
 					if (err) return next(err)
-					res.send(data)
-})
+			  		var tab={}
+					var length = Object.keys(data).length; 
+					for (var i = 0; i <length; i++) 
+					{
+						if(data[i].friend == CurrentUser)
+						tab[i] = data[i].user.pseudo;  
+						else tab[i] = data[i].friend.pseudo;  
+
+					}	
+					res.jsonp(tab)
+					})
 			})
 		});
-		
 
 	})
 
