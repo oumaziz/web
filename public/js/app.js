@@ -15,8 +15,14 @@ $rootScope.currentUser = $cookies.getObject("currentUser");
       var Friends = $resource("http://localhost:3000/users/friends");
 
       $scope.friends = new Friends();
+   
+	$scope.friends.$get(function(result){
 
+		 $scope.Listefriends=result;
+	})
+	
       $scope.envoyer = function() {
+
 
           $scope.friends.$save(function(result){
 
@@ -28,6 +34,7 @@ $rootScope.currentUser = $cookies.getObject("currentUser");
 
                 $cookies.putObject("currentUser", $scope.friends, {'expires': dt});
                 $location.path('/friends');
+
             }else{
                 Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
             }
