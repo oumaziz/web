@@ -4,7 +4,7 @@
   "description": "Projet Web",
   "main": "server.js",
   "scripts": {
-    "postinstall": "bower install && node scripts/postinstall.js",
+    "postinstall": "node scripts/postinstall.js",
     "start": "node server/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
