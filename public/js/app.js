@@ -1,178 +1,179 @@
 var app = angular.module("expensesApp", ['ngRoute', 'ngCookies', 'ngResource', 'ngSanitize', 'ui-notification']);
 
 app.config(['$routeProvider', function ($routeProvider) {
-	$routeProvider
-    .when('/register', {templateUrl: 'js/views/register.html', controller: 'RegisterController'})
-    .when('/dashboard', {templateUrl: 'js/views/dashboard.html', controller: 'DashboardController'})
-    .when('/dashboard/friends', {templateUrl: 'js/views/friends.html', controller: 'FriendsController'})
-    .when('/dashboard/groups', {templateUrl: 'js/views/groups.html', controller: 'GroupsController'})
-    .when('/', {templateUrl: 'js/views/login.html', controller: 'LoginController'})
-    .otherwise({redirectTo: '/'});
+    $routeProvider
+	.when('/register', {templateUrl: 'js/views/register.html', controller: 'RegisterController'})
+	.when('/dashboard', {templateUrl: 'js/views/dashboard.html', controller: 'DashboardController'})
+	.when('/dashboard/friends', {templateUrl: 'js/views/friends.html', controller: 'FriendsController'})
+	.when('/dashboard/groups', {templateUrl: 'js/views/groups.html', controller: 'GroupsController'})
+	.when('/', {templateUrl: 'js/views/login.html', controller: 'LoginController'})
+	.otherwise({redirectTo: '/'});
 }]);
 
 app.controller("DashboardController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
-  function ($scope, $resource, $rootScope, $cookies, $location, Notification){
-var Friends = $resource("http://localhost:3000/users/friends");
+				       function ($scope, $resource, $rootScope, $cookies, $location, Notification){
+					  
+					   if($rootScope.currentUser == null) $location.path('/');
 
-    $scope.friends = new Friends();
+					   console.log("dans le dash")    
 
-    Friends.query(function(result){
-
-        $scope.Listefriends = result;
-    })
-    if($rootScope.currentUser == null) $location.path('/');
-
-    console.log("dans le dash")    
-
-}]);
+				       }]);
 
 app.controller("GroupsController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
-  function ($scope, $resource, $rootScope, $cookies, $location, Notification){
-var Groups = $resource("http://localhost:3000/users/groups");
+				    function ($scope, $resource, $rootScope, $cookies, $location, Notification){
+					var Groups = $resource("http://localhost:3000/users/groups");
 
-    $scope.groups = new Groups();
+					$scope.groups = new Groups();
 
-    Groups.query(function(result){
+					Groups.query(function(result){
 
-        $scope.Listegroups = result;
-    })
- $scope.MemberNumber = [1,2];
- $scope.groups.membres = [];
- $scope.groups.membres[0] = {pseudo:$rootScope.currentUser.pseudo,
- email:$rootScope.currentUser.email
+					    $scope.Listegroups = result;
+					})
+					$scope.MemberNumber = [1,2];
+					$scope.groups.membres = [];
+					$scope.groups.membres[0] = {
+					    pseudo:$rootScope.currentUser.pseudo,
+					    email:$rootScope.currentUser.email
 
-}
-var addMember= $scope.MemberNumber.length+1;
+					   }
+					var addMember= $scope.MemberNumber.length+1;
 
-$scope.changePseudo = function(number) {
+					$scope.changePseudo = function(number) {
 
-for(var j=0; j <$scope.Listefriends.length; j++ ) {
-if($scope.groups.membres[number].pseudo==$scope.Listefriends[j].pseudo)   $scope.groups.membres[number].email=$scope.Listefriends[j].email;
-}
-}
- 
-      
-  
-   
+					    for(var j=0; j <$scope.Listefriends.length; j++ ) {
+						if($scope.groups.membres[number].pseudo==$scope.Listefriends[j].pseudo) 
+						    $scope.groups.membres[number].email=$scope.Listefriends[j].email;
+					    }
+					}
+					
+					
+					
+					
 
-     $scope.add = function() {
-            $scope.MemberNumber.push(addMember++);
-        }
+					$scope.add = function() {
+					    $scope.MemberNumber.push(addMember++);
+					}
 
-    $scope.send = function() {
+					$scope.send = function() {
 
-      $scope.groups.$save(function(result){
-	
-        if(result.error == null){
-            location.reload();
+					    $scope.groups.$save(function(result){
+						
+						if(result.error == null){
 
-        }else{
-            Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
-        }
-    }).catch(function(req){
-        Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
-    });
-}
+						    location.reload();
 
-}]);
+						}else{
+						    Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
+						}
+					    }).catch(function(req){
+						Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
+					    });
+					}
+
+				    }]);
 
 app.controller("FriendsController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
-  function ($scope, $resource, $rootScope, $cookies, $location, Notification){
+				     function ($scope, $resource, $rootScope, $cookies, $location, Notification){
 
-    var Friends = $resource("http://localhost:3000/users/friends");
+					 var Friends = $resource("http://localhost:3000/users/friends");
 
-    $scope.friends = new Friends();
+					 $scope.friends = new Friends();
 
-   
+					   Friends.query(function(result){
 
-    $scope.envoyer = function() {
+					       $rootScope.Listefriends = result;
+					   })
+					 
 
-      $scope.friends.$save(function(result){
+					 $scope.envoyer = function() {
 
-        if(result.error == null){
- 		location.reload(); 
-           
-        }else{
-            Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
-        }
-    }).catch(function(req){
-        Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
-    });
-}
-}]);
+					     $scope.friends.$save(function(result){
+
+						 if(result.error == null){
+
+ 						     location.reload(); 
+						     
+						 }else{
+						     Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
+						 }
+					     }).catch(function(req){
+						 Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
+					     });
+					 }
+				     }]);
 
 app.controller("LoginController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
-  function ($scope, $resource, $rootScope, $cookies, $location, Notification){
+				   function ($scope, $resource, $rootScope, $cookies, $location, Notification){
 
-      if($rootScope.currentUser != null) $location.path('/dashboard');
+				       if($rootScope.currentUser != null) $location.path('/dashboard');
 
-      var Login = $resource("http://localhost:3000/users/login");
+				       var Login = $resource("http://localhost:3000/users/login");
 
-      $scope.login = new Login();
+				       $scope.login = new Login();
 
-      $scope.envoyer = function() {
+				       $scope.envoyer = function() {
 
-          $scope.login.$save(function(result){
+					   $scope.login.$save(function(result){
 
-            if(result.error == null){
-                $rootScope.currentUser = result;
+					       if(result.error == null){
+						   $rootScope.currentUser = result;
 
-                var dt = new Date();
-                dt.setMinutes(dt.getMinutes() + 30);   
+						   var dt = new Date();
+						   dt.setMinutes(dt.getMinutes() + 30);   
 
-                $cookies.putObject("currentUser", $scope.login, {'expires': dt});
-                $location.path('/dashboard');
-            }else{
-                Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
-            }
-        }).catch(function(req){
-            Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
-        });
-    }
-}]);
+						   $cookies.putObject("currentUser", $scope.login, {'expires': dt});
+						   $location.path('/dashboard');
+					       }else{
+						   Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
+					       }
+					   }).catch(function(req){
+					       Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
+					   });
+				       }
+				   }]);
 
 app.controller("RegisterController", ['$scope', '$resource', '$cookies', '$rootScope', '$location', 'Notification',
-   function ($scope, $resource, $cookies, $rootScope, $location, Notification){
+				      function ($scope, $resource, $cookies, $rootScope, $location, Notification){
 
-    if($rootScope.currentUser != null) $location.path('/dashboard');
+					  if($rootScope.currentUser != null) $location.path('/dashboard');
 
-    var Register = $resource("http://localhost:3000/users/register");
-    $scope.register = new Register();
+					  var Register = $resource("http://localhost:3000/users/register");
+					  $scope.register = new Register();
 
-    $scope.envoyer = function() {
-        $scope.register.$save(function(result){
+					  $scope.envoyer = function() {
+					      $scope.register.$save(function(result){
 
-            if(result.error == null){
-                $rootScope.currentUser = result;
+						  if(result.error == null){
+						      $rootScope.currentUser = result;
 
-                var dt = new Date();
-                dt.setMinutes(dt.getMinutes() + 30);  
+						      var dt = new Date();
+						      dt.setMinutes(dt.getMinutes() + 30);  
 
-                $cookies.putObject("currentUser", $scope.register, {'expires': dt});
-                $location.path('#/dashboard');
-            }else{
-                Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
-            }
+						      $cookies.putObject("currentUser", $scope.register, {'expires': dt});
+						      $location.path('#/dashboard');
+						  }else{
+						      Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
+						  }
 
-        }).catch(function(req){
-            Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
-        });
-    }
-}]);
+					      }).catch(function(req){
+						  Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
+					      });
+					  }
+				      }]);
 
 app.controller("BarController", ['$scope', '$rootScope', '$resource', '$location', '$cookies', 
-    function ($scope, $rootScope, $resource, $location, $cookies){
+				 function ($scope, $rootScope, $resource, $location, $cookies){
 
-        $rootScope.currentUser = $cookies.getObject("currentUser");
+				     $rootScope.currentUser = $cookies.getObject("currentUser");
 
-        var Logout = $resource("http://localhost:3000/users/logout");
+				     var Logout = $resource("http://localhost:3000/users/logout");
 
-        $scope.deconnexion = function(){
-            Logout.get();
-            console.log("deco");
-            $cookies.remove("currentUser");
-            $rootScope.currentUser = null;
-            $location.path('#/');
-        }
+				     $scope.deconnexion = function(){
+					 Logout.get();
+					 console.log("deco");
+					 $cookies.remove("currentUser");
+					 $rootScope.currentUser = null;
+					 $location.path('#/');
+				     }
 
-    }]);
+				 }]);
