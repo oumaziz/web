@@ -83,6 +83,10 @@ MongoClient.connect(url, function(err, db) {
 			    email : req.body.email,
 			    pseudo : req.body.pseudo
 			}
+			
+			var Expenses= new Array();
+
+
 			db.collection("friends", function(err, friends) {
 
 			    friends.findOne( { 
@@ -96,7 +100,7 @@ MongoClient.connect(url, function(err, db) {
 
 				if (friend == null){
 
-				    friends.insert({user:CurrentUser, friend:Friend}, function(err, friends){
+				    friends.insert({user:CurrentUser, friend:Friend, expenses:Expenses }, function(err, friends){
 					console.log("Insertion ami reussie")
 					res.json(friends.ops[0]).end()
 
@@ -140,6 +144,21 @@ MongoClient.connect(url, function(err, db) {
 		    
 		    res.jsonp(tab)
 		})
+	    })
+	});
+
+	app.delete('/users/friends/:email', function(req, res) {
+	    
+	    db.collection("friends", function(err, friends) {
+		friends.remove( { $or : [ 
+		    {$and : [ { "user.email" : req.session.user.email }, { "friend.email": req.params.email} ]},
+		    {$and : [ { "friend.email" : req.session.user.email }, { "user.email": req.params.email} ]}
+		] 
+				}, function(err, friend){
+				    if(err) return;
+				    console.log("ami supprimé")
+				}
+			      )
 	    })
 	});
 
@@ -197,7 +216,8 @@ MongoClient.connect(url, function(err, db) {
 	    {
 		if(req.body.membres[j].pseudo.length < 4) return res.json({error:"Pseudo trop court"}).end()
 	    }
-	    groups.insert({nameGroupe:req.body.nameGroupe, membres:req.body.membres}, function(err, groups){
+	    var Expenses= new Array();
+	    groups.insert({nameGroupe:req.body.nameGroupe, membres:req.body.membres , expenses:Expenses}, function(err, groups){
 		console.log("Insertion groupe reussie")
 		res.json(groups.ops[0]).end()
 	    })
