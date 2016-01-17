@@ -29,7 +29,7 @@ MongoClient.connect(url, function(err, db) {
 
 
 	    if(req.body.password.length < 6) return res.json({error:"Mot de passe trop court"}).end()
-	    if(req.body.pseudo.length < 6) return res.json({error:"Pseudo trop court"}).end()	
+	    if(req.body.pseudo.length < 4) return res.json({error:"Pseudo trop court"}).end()	
 	    users.findOne({email:req.body.email}, function(err, user){
 
 		if(err) return;
@@ -65,7 +65,7 @@ MongoClient.connect(url, function(err, db) {
 	app.post('/users/friends', function(req, res) {
 
 	    if (req.body.email != req.session.user.email) {
-		if(req.body.pseudo.length < 6) return res.json({error:"Pseudo trop court"}).end()
+		if(req.body.pseudo.length < 4) return res.json({error:"Pseudo trop court"}).end()
 		users.findOne({email:req.body.email}, function(err, user){
 
 		    if(err) return;
@@ -191,10 +191,11 @@ MongoClient.connect(url, function(err, db) {
 	});
 
 	app.post('/users/groups', function(req, res) {
+	    if(req.body.membres[j].pseudo.length < 4) return res.json({error:"Nom du groupe trop court"}).end()
 	    var lengthMembres = Object.keys(req.body.membres).length;
 	    for (var j = 0; j <lengthMembres; j++) 
 	    {
-		if(req.body.membres[j].pseudo.length < 6) return res.json({error:"Pseudo trop court"}).end()
+		if(req.body.membres[j].pseudo.length < 4) return res.json({error:"Pseudo trop court"}).end()
 	    }
 	    groups.insert({nameGroupe:req.body.nameGroupe, membres:req.body.membres}, function(err, groups){
 		console.log("Insertion groupe reussie")
