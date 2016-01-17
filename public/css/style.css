@@ -7,3 +7,14 @@ body {
 	margin-top: -10px;
 	margin-right: 10px;
 }
+
+.error {
+	color : red
+}
+
+input.ng-invalid.ng-touched {
+	Background-color : #FA787E
+}
+input.ng-valid.ng-touched {
+	Background-color : #78FA89
+}
