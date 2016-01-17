@@ -1,197 +1,302 @@
 <div class="row" ng-show="currentUser">
-  <div class="col-md-3">
-    <div class="panel panel-default" ng-controller="FriendsController">
-      <div class="panel-heading">Mes amis</div>
-      <div class="panel-body">
-	<ul ng-repeat="friend in Listefriends">
-	  <li ng-controller="FriendsRemoveController" > <a href="" data-toggle="modal" data-target="#ViewFriend">{{friend.pseudo}}</a></li>
-	</ul>
-	<datalist  id="amis">
-	  <option ng-repeat="friend in Listefriends" value={{friend.pseudo}}>
-	</datalist>
-	
-	<div class="modal fade" id="addFriend" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-	  <div class="modal-dialog" role="document">
-	    <div class="modal-content">
-	      <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		<h4 class="modal-title" id="myModalLabel">Ajouter un ami</h4>
-	      </div>
-	      <div class="modal-body">
-		<form  class="form-signin" name="FormAddFriend" ng-submit="FormAddFriend.$valid && envoyer()">
-		  <label for="inputEmail" class="sr-only">Pseudo</label>
-		  <input type="text" id="inputPseudo" ng-model="friends.pseudo" class="form-control"  ng-minlength="4" ng-maxlength="15" name="pseudo" placeholder="Pseudo" required autofocus>
-		  <br>
-		  <label for="inputEmail" class="sr-only">Email address</label>
-		  <input type="email" id="inputEmail" ng-model="friends.email" class="form-control" name="email" placeholder="Email address" required >
-		  <span class="error" ng-show="FormAddFriend.pseudo.$error.minlength">
-		    Pseudo Too short!<br></span>
-		  <span class="error" ng-show="FormAddFriend.pseudo.$error.maxlength">
-		    Pseudo Too long!<br></span> 
-		  <span class="error" ng-show="FormAddFriend.email.$error.email">
-		    Enter a valid email address!<br></span>
-		  <br>
-		  <button class="btn btn-lg btn-primary btn-block" type="submit">Ajouter</button>
-		</form>
-	      </div>
-	    </div>
-	  </div>
-	</div>
+	<div class="col-md-3">
+		<div class="panel panel-default" ng-controller="FriendsController">
+			<div class="panel-heading">Mes amis</div>
+			<div class="panel-body">
+				<ul ng-repeat="friend in Listefriends">
+					<li ng-controller="FriendsRemoveController" > <a href="" data-toggle="modal" data-target="#ViewFriend">{{friend.pseudo}}</a></li>
+				</ul>
+				<datalist  id="amis">
+					<option ng-repeat="friend in Listefriends" value={{friend.pseudo}}>
+					</datalist>
 
-	<div class="modal fade" id="ViewFriend" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-	  <div class="modal-dialog" role="document">
-	    <div class="modal-content">
-	      <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		<h4 class="modal-title" id="myModalLabel">Réglage</h4>
-	      </div>
-	      <div class="modal-body">
-		<form  class="form-signin" name="FormEditFriend" ng-submit="FormAddFriend.$valid && update()">
-		  <label for="inputEmail" class="sr-only">Pseudo</label>
-		  <input type="text" id="inputPseudo" ng-model="friends.pseudo" class="form-control"  ng-minlength="4" ng-maxlength="15" name="pseudo" placeholder="Pseudo" required autofocus>
-		  <br>
+					<div class="modal fade" id="addFriend" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+									<h4 class="modal-title" id="myModalLabel">Ajouter un ami</h4>
+								</div>
+								<div class="modal-body">
+									<form  class="form-signin" name="FormAddFriend" ng-submit="FormAddFriend.$valid && envoyer()">
+										<label for="inputEmail" class="sr-only">Pseudo</label>
+										<input type="text" id="inputPseudo" ng-model="friends.pseudo" class="form-control"  ng-minlength="4" ng-maxlength="15" name="pseudo" placeholder="Pseudo" required autofocus>
+										<br>
+										<label for="inputEmail" class="sr-only">Email address</label>
+										<input type="email" id="inputEmail" ng-model="friends.email" class="form-control" name="email" placeholder="Email address" required >
+										<span class="error" ng-show="FormAddFriend.pseudo.$error.minlength">
+											Pseudo Too short!<br></span>
+											<span class="error" ng-show="FormAddFriend.pseudo.$error.maxlength">
+												Pseudo Too long!<br></span> 
+												<span class="error" ng-show="FormAddFriend.email.$error.email">
+													Enter a valid email address!<br></span>
+													<br>
+													<button class="btn btn-lg btn-primary btn-block" type="submit">Ajouter</button>
+												</form>
+											</div>
+										</div>
+									</div>
+								</div>
 
-		  <input type="email" id="inputEmail" ng-model="friends.email" class="form-control" ng-hide="true" >
-		  <span class="error" ng-show="FormEditFriend.pseudo.$error.minlength">
-		    Pseudo Too short!<br></span>
-		  <span class="error" ng-show="FormEditFriend.pseudo.$error.maxlength">
-		    Pseudo Too long!<br></span> 
-		  <br>
-		  <button class="btn btn-lg btn-primary btn-block" type="submit">Modifier</button>
-		  <button class="btn btn-lg btn-primary btn-block" type="button" ng-click=removeFriend(friend.email);>Supprimer</button>
-		</form>
-	      </div>
-	    </div>
-	  </div>
-	</div>
+								<div class="modal fade" id="ViewFriend" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+									<div class="modal-dialog" role="document">
+										<div class="modal-content">
+											<div class="modal-header">
+												<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+												<h4 class="modal-title" id="myModalLabel">Réglage</h4>
+											</div>
+											<div class="modal-body">
+												<form  class="form-signin" name="FormEditFriend" ng-submit="FormAddFriend.$valid && update()">
+													<label for="inputEmail" class="sr-only">Pseudo</label>
+													<input type="text" id="inputPseudo" ng-model="friends.pseudo" class="form-control"  ng-minlength="4" ng-maxlength="15" name="pseudo" placeholder="Pseudo" required autofocus>
+													<br>
 
-	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addFriend">
-	  Ajouter un ami
-	</button>
+													<input type="email" id="inputEmail" ng-model="friends.email" class="form-control" ng-hide="true" >
+													<span class="error" ng-show="FormEditFriend.pseudo.$error.minlength">
+														Pseudo Too short!<br></span>
+														<span class="error" ng-show="FormEditFriend.pseudo.$error.maxlength">
+															Pseudo Too long!<br></span> 
+															<br>
+															<button class="btn btn-lg btn-primary btn-block" type="submit">Modifier</button>
+															<button class="btn btn-lg btn-primary btn-block" type="button" ng-click=removeFriend(friend.email);>Supprimer</button>
+														</form>
+													</div>
+												</div>
+											</div>
+										</div>
 
-      </div>
-    </div>
-    <div class="panel panel-default" ng-controller="GroupsController" >
-      <div class="panel-heading">Mes groupes</div>
-      <div class="panel-body">
-	<ul ng-repeat="group in Listegroups">
-	  <li>{{group.nameGroupe}}</li>
-	  <ul ng-repeat="member in group.membres">
-	    <li> {{member.pseudo}}</li>
-	    
-	  </ul>
-	</ul>
+										<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addFriend">
+											Ajouter un ami
+										</button>
 
-	<div class="modal fade" id="addGroup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-	  <div class="modal-dialog" role="document">
-	    <div class="modal-content">
-	      <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		<h4 class="modal-title" id="myModalLabel">Ajouter un groupe</h4>
-	      </div>
-	      <div class="modal-body">
-		<form  class="form-signin" name="FormAddGroup" ng-submit="FormAddGroup.$valid && send()">
-		  <label for="inputGroupName" class="sr-only">Group name</label>
-		  <input type="text" id="inputGroupName" ng-model="groups.nameGroupe" name="GroupName" ng-minlength="4" ng-maxlength="25" class="form-control" placeholder="Group name" required autofocus>
-		  <br>
-		  <label for="inputGroupName" class="sr-only">Member</label>
-		  <div class="form-signin" ng-repeat="number in MemberNumber" >
+									</div>
+								</div>
 
-		    <div href ng-if="$first || $index==1"  >
-		      <input type="text" list="amis" ng-minlength="4" ng-maxlength="15" name="pseudo_{{$index}}" ng-model="groups.membres[number].pseudo" ng-change="changePseudo(number)" ng-required="true" class="form-control" placeholder="Member pseudo"  required>
-		      
+								<div class="panel panel-default" ng-controller="GroupsController" >
+									<div class="panel-heading">Mes groupes</div>
+									<div class="panel-body">
+										<ul ng-repeat="group in Listegroups">
+											<li>{{group.nameGroupe}}</li>
+											<ul ng-repeat="member in group.membres">
+												<li> {{member.pseudo}}</li>
 
-		      <div href ng-if="!$first && $index !=1 "  >
-			<input type="text" list="amis" ng-minlength="4" ng-maxlength="15" name="pseudo_{{$index}}"  ng-model="groups.membres[number].pseudo" class="form-control"  placeholder="Member pseudo"  >
-			
-			
-		      </div>
-		      <span class="error" ng-show="FormAddGroup['pseudo_{{$index}}'].$error.minlength ">
-			Member pseudo Too short!</span>
-		      <span class="error" ng-show="FormAddGroup['pseudo_{{$index}}'].$error.maxlength">
-			Member pseudo Too long!</span> 
-		      <input type="email" ng-model="groups.membres[number].email" name="email_{{$index}}" class="form-control" 
-			     placeholder="Member mail" >  <button ng-if="!$first && $index !=1 " ng-click="remove(number)" aria-label="Remove">X</button>
-		      <span class="error" ng-show="FormAddGroup['email_{{$index}}'].$error.email">
-			Enter a valid email address!<br></span>
-		    </div>
-		    
+											</ul>
+										</ul>
 
-		    <a href ng-click="add()"> Ajouter un autre membre </a><br/>
+										<div class="modal fade" id="addGroup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+											<div class="modal-dialog" role="document">
+												<div class="modal-content">
+													<div class="modal-header">
+														<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+														<h4 class="modal-title" id="myModalLabel">Ajouter un groupe</h4>
+													</div>
+													<div class="modal-body">
+														<form  class="form-signin" name="FormAddGroup" ng-submit="FormAddGroup.$valid && send()">
+															<label for="inputGroupName" class="sr-only">Group name</label>
+															<input type="text" id="inputGroupName" ng-model="groups.nameGroupe" name="GroupName" ng-minlength="4" ng-maxlength="25" class="form-control" placeholder="Group name" required autofocus>
+															<br>
+															<label for="inputGroupName" class="sr-only">Member</label>
+															<div class="form-signin" ng-repeat="number in MemberNumber" >
 
-		    <span class="error" ng-show="FormAddGroup.GroupName.$error.minlength">
-		      Group name Too short!<br></span>
-		    <span class="error" ng-show="FormAddGroup.GroupName.$error.maxlength">
-		      Group name Too long!<br></span> 
-		    
-		    
-		    <button class="btn btn-lg btn-primary btn-block" type="submit">Ajouter</button>
-		</form>
-		</div>
-	      </div>
-	    </div>
-	  </div>
-	  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addGroup">
-	    Ajouter un groupe
-	  </button>
-	</div>
-      </div>
-    </div>
+																<div href ng-if="$first || $index==1"  >
+																	<input type="text" list="amis" ng-minlength="4" ng-maxlength="15" name="pseudo_{{$index}}" ng-model="groups.membres[number].pseudo" ng-change="changePseudo(number)" ng-required="true" class="form-control" placeholder="Member pseudo"  required>
 
 
+																	<div href ng-if="!$first && $index !=1 "  >
+																		<input type="text" list="amis" ng-minlength="4" ng-maxlength="15" name="pseudo_{{$index}}"  ng-model="groups.membres[number].pseudo" class="form-control"  placeholder="Member pseudo"  >
 
-    <div class="col-md-9">
-      <div class="panel panel-default">
-	<div class="panel-heading">
-	  <h4>Tableau de bord
-	    <a class="btn btn-success pull-right btn-adapt" data-toggle="modal" data-target="#addRemboursement">Remboursement</a>
-	    <a class="btn btn-warning pull-right btn-adapt" data-toggle="modal" data-target="#addDepense">Dépense</a>
-	  </h4>
 
-	  <div class="modal fade" id="addRemboursement" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-	    <div class="modal-dialog" role="document">
-	      <div class="modal-content">
-		<div class="modal-header">
-		  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		  <h4 class="modal-title" id="myModalLabel">Ajouter un remboursement</h4>
-		</div>
-		<div class="modal-body">
-		  Rien pour le moment ..
-		</div>
-	      </div>
-	    </div>
-	  </div>
+																	</div>
+																	<span class="error" ng-show="FormAddGroup['pseudo_{{$index}}'].$error.minlength ">
+																		Member pseudo Too short!</span>
+																		<span class="error" ng-show="FormAddGroup['pseudo_{{$index}}'].$error.maxlength">
+																			Member pseudo Too long!</span> 
+																			<input type="email" ng-model="groups.membres[number].email" name="email_{{$index}}" class="form-control" 
+																			placeholder="Member mail" >  <button ng-if="!$first && $index !=1 " ng-click="remove(number)" aria-label="Remove">X</button>
+																			<span class="error" ng-show="FormAddGroup['email_{{$index}}'].$error.email">
+																				Enter a valid email address!<br></span>
+																			</div>
 
-	  <div class="modal fade" id="addDepense" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-	    <div class="modal-dialog" role="document">
-	      <div class="modal-content">
-		<div class="modal-header">
-		  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		  <h4 class="modal-title" id="myModalLabel">Ajouter une dépense</h4>
-		</div>
-		<div class="modal-body">
-		  Rien pour le moment ..
-		</div>
-	      </div>
-	    </div>
-	  </div>
-	</div>
-	<div class="panel-body">
-	  <div class="col-md-6">
-	    <div class="thumbnail">
-	      <div class="caption">
-		<h4>Vous devez</h4>
-	      </div>
-	    </div>
-	  </div> 	
-	  <div class="col-md-6">
-	    <div class="thumbnail">
-	      <div class="caption">
-		<h4>On vous doit</h4>
-	      </div>
-	    </div>
-	  </div>
-	</div>
-      </div>
-    </div>
-  </div>
+
+																			<a href ng-click="add()"> Ajouter un autre membre </a><br/>
+
+																			<span class="error" ng-show="FormAddGroup.GroupName.$error.minlength">
+																				Group name Too short!<br></span>
+																				<span class="error" ng-show="FormAddGroup.GroupName.$error.maxlength">
+																					Group name Too long!<br></span> 
+
+
+																					<button class="btn btn-lg btn-primary btn-block" type="submit">Ajouter</button>
+																				</form>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+																<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addGroup">
+																	Ajouter un groupe
+																</button>
+															</div>
+														</div>
+													</div>
+												</div>
+
+
+
+
+												<div class="col-md-9">
+													<div class="panel panel-default">
+														<div class="panel-heading">
+															<h4>Tableau de bord
+																<a class="btn btn-warning pull-right btn-adapt" data-toggle="modal" data-target="#addGroupDepense">Ajouter dépense (Groupe)</a>
+																<a class="btn btn-success pull-right btn-adapt" data-toggle="modal" data-target="#addFriendDepense">Ajouter dépense (Ami)</a>
+															</h4>
+
+															<div class="modal fade" id="addGroupDepense" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-controller="GroupExpensesController">
+																<div class="modal-dialog" role="document">
+																	<div class="modal-content">
+																		<div class="modal-header">
+																			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+																			<h4 class="modal-title" id="myModalLabel">Ajouter une dépense</h4>
+																		</div>
+																		<div class="modal-body">
+																			<form class="container-fluid" ng-submit="envoyer()">
+																				<div class="col-md-12">
+																					<span>Votre dépense concerne : </span>
+																					<select name="group" ng-model="expense.groupe" ng-change="payers = getPayers()">
+																						<option ng-repeat="group in myGroups" value="{{group.id}}">{{group.nameGroupe}}</option>
+																					</select>
+																				</div>
+																				<br><br>
+
+																				<div class="col-md-12">
+																					<div class="input-group">
+																						<input type="number" step="any" ng-model="expense.cost" class="form-control" placeholder="Montant"  ng-change="expense.balance = getBalance()" required>
+																						<span class="input-group-addon">€</span>
+																					</div>
+																					<br>
+																				</div>
+
+																				<div class="col-md-12">
+																					<input type="date" id="expensedate" name="expensedate" ng-model="expense.date" placeholder="Date"  class="form-control" required>
+																					<br>
+																				</div>
+
+																				<div class="col-md-12">
+																					<label for="inputDescription" class="sr-only">Description</label>
+																					<textarea id="inputDescription" ng-model="expense.description" class="form-control" placeholder="Description" required autofocus></textarea>
+																					<br>
+																				</div>
+
+																				<div class="col-md-12">
+																					<p>Payé par <select name="payer" ng-model="expense.payer" >
+																						<option ng-repeat="payer in payers" value="{{payer.email}}">{{payer.pseudo}}</option>
+																					</select> Et partagé à <a href="" ng-click="changeCut()">{{expense.cut}}</a></p>
+																					<br>
+																				</div>
+
+																				<div class="col-md-12" ng-show="detail">
+																					<div ng-repeat="user in expense.balance">
+																						<label for="inputPseudo">{{ user.user.pseudo }}</label>
+																						<div class="input-group">
+																							<input type="number" step="any" id="inputPseudo" ng-model="user.owe" class="form-control" 
+																							placeholder="{{ user.user.pseudo }}" autofocus>
+																							<span class="input-group-addon">€</span>
+																						</div>
+																						<br>
+																					</div>
+
+																					<br>
+																					<p><b>TOTAL : {{ getTotal() | currency : "€"}}</b> <span class="pull-right">{{ expense.cost - getTotal() | currency : "€" }} restants</span></p>
+																					<br>
+																				</div>
+
+																				<button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="add()">Ajouter</button>
+																			</form>
+																		</div>
+																	</div>
+																</div>
+															</div>
+
+															<div class="modal fade" id="addFriendDepense" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-controller="FriendExpensesController">
+																<div class="modal-dialog" role="document">
+																	<div class="modal-content">
+																		<div class="modal-header">
+																			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+																			<h4 class="modal-title" id="myModalLabel">Ajouter une dépense</h4>
+																		</div>
+																		<div class="modal-body">
+																			<form class="container-fluid" ng-submit="envoyer()">
+																				<div class="col-md-12">
+																					<span>Votre dépense concerne : </span>
+																					<select name="friend" ng-model="expense.friend">
+																						<option ng-repeat="friend in Listefriends" value="{{friend.email}}">{{friend.pseudo}}</option>
+																					</select>
+																				</div>
+																				<br><br>
+
+																				<div class="col-md-12">
+																					<div class="input-group">
+																						<input type="number" step="any" ng-model="expense.cost" class="form-control" placeholder="Montant" required>
+																						<span class="input-group-addon">€</span>
+																					</div>
+																					<br>
+																				</div>
+
+																				<div class="col-md-12">
+																					<input type="date" id="expensedate" name="expensedate" ng-model="expense.date" placeholder="Date"  class="form-control" required>
+																					<br>
+																				</div>
+
+																				<div class="col-md-12">
+																					<label for="inputDescription" class="sr-only">Description</label>
+																					<textarea id="inputDescription" ng-model="expense.description" class="form-control" placeholder="Description" required autofocus></textarea>
+																					<br>
+																				</div>
+
+																				<div class="col-md-12">
+																					<p>Payé par <a href="" ng-click="changePayer()">{{expense.payerText}}</a> Et partagé à <a href="" ng-click="changeCut()">{{expense.cut}}</a></p>
+																					<br>
+																				</div>
+
+																				<div class="col-md-12" ng-show="detail">
+																					<div class="input-group">
+																						<label for="inputYou" class="sr-only">Part du payeur</label>
+																						<input type="number" step="any" id="inputPseudo" ng-model="expense.you" class="form-control" placeholder="Part du payeur" autofocus>
+																						<span class="input-group-addon">€</span>
+																					</div>
+																					<br>
+																					<div class="input-group">
+																						<label for="inputYou" class="sr-only">Part de l'ami</label>
+																						<input type="number" step="any" id="inputPseudo" ng-model="expense.owe" class="form-control" placeholder="Part de l'ami" autofocus>
+																						<span class="input-group-addon">€</span>
+																					</div>
+																					<br>
+																					<p><b>TOTAL : {{ expense.you + expense.owe | currency : "€"}}</b> <span class="pull-right">{{ expense.cost - (expense.you + expense.owe) | currency : "€" }} restants</span></p>
+																					<br>
+																				</div>
+
+																				<button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="add()">Ajouter</button>
+																			</form>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+														<div class="panel-body">
+															<div class="col-md-6">
+																<div class="thumbnail">
+																	<div class="caption">
+																		<h4>Vous devez</h4>
+																	</div>
+																</div>
+															</div> 	
+															<div class="col-md-6">
+																<div class="thumbnail">
+																	<div class="caption">
+																		<h4>On vous doit</h4>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
