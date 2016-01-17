@@ -6,7 +6,10 @@
 				<ul ng-repeat="friend in Listefriends">
 					<li>{{friend.pseudo}}</li>
 				</ul>
-
+ <datalist  id="amis">
+  <option ng-repeat="friend in Listefriends" value={{friend.pseudo}}>
+</datalist>
+		
 				<div class="modal fade" id="addFriend" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 					<div class="modal-dialog" role="document">
 						<div class="modal-content">
@@ -34,13 +37,64 @@
 
 			</div>
 		</div>
-		<div class="panel panel-default">
-			<div class="panel-heading">Mes groups</div>
+		<div class="panel panel-default" ng-controller="GroupsController" >
+			<div class="panel-heading">Mes groupes</div>
 			<div class="panel-body">
-				Rien pour le moment ..
+				<ul ng-repeat="group in Listegroups">
+					<li>{{group.nameGroupe}}</li>
+					<ul ng-repeat="member in group.membres">
+					<li> {{member.pseudo}}</li>
+					
+					</ul>
+				</ul>
+
+				<div class="modal fade" id="addGroup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								<h4 class="modal-title" id="myModalLabel">Ajouter un groupe</h4>
+							</div>
+							<div class="modal-body">
+								<form class="form-signin" ng-submit="send()">
+									<label for="inputGroupName" class="sr-only">Group name</label>
+									<input type="text" id="inputGroupName" ng-model="groups.nameGroupe" class="form-control" placeholder="Group name" required autofocus>
+									<br>
+									<label for="inputGroupName" class="sr-only">Member</label>
+									<div class="form-signin" ng-repeat="number in MemberNumber" >
+
+			<div href ng-if="$first || $index==1"  >
+			      <input type="text" list="amis" ng-model="groups.membres[number].pseudo" ng-change="changePseudo(number)" class="form-control" placeholder="Member pseudo"  required>
+		
+			</div>
+
+			<div href ng-if="!$first && $index !=1 "  >
+			  <input type="text" list="amis" ng-model="groups.membres[number].pseudo" class="form-control"
+					   placeholder="Member pseudo"  >
+			 
+			</div>
+<input type="email" ng-model="groups.membres[number].email" class="form-control" 
+					   placeholder="Member mail" >
+
+</div>
+       
+
+<a href ng-click="add()"> Ajouter un autre membre </a>
+									<button class="btn btn-lg btn-primary btn-block" type="submit">Ajouter</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addGroup">
+					Ajouter un groupe
+				</button>
 			</div>
 		</div>
 	</div>
+
+
+
 	<div class="col-md-9">
 		<div class="panel panel-default">
 			<div class="panel-heading">
