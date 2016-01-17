@@ -13,7 +13,11 @@ app.use(express.static("public"));
 app.use("/bower_components", express.static("bower_components"));
 
 app.use(cookieParser())
-app.use(session({"secret": "RMratsy2T2SLpwMvqglnkleW43j40iKp"}))
+app.use(session({
+	secret: "RMratsy2T2SLpwMvqglnkleW43j40iKp",
+	resave: true,
+    saveUninitialized: true
+}))
 
 app.use(bodyParser.json()) 
 app.use(bodyParser.urlencoded({ extended: true })) 
@@ -33,6 +37,7 @@ MongoClient.connect(url, function(err, db) {
 						if (user != null) res.json({error:"Ce compte existe déjà"}).end()	
 							else{
 								users.insert({email:req.body.email, password:md5(req.body.password), pseudo:req.body.pseudo}, function(err, user){
+									req.session.user = user.ops[0]
 									res.json(user.ops[0]).end()
 								})
 							}
