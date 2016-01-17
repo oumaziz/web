@@ -18,11 +18,17 @@
 		<h4 class="modal-title" id="myModalLabel">Ajouter un ami</h4>
 	      </div>
 	      <div class="modal-body">
-		<form class="form-signin" ng-submit="envoyer()">
+		<form  class="form-signin" name="FormAddFriend" ng-submit="FormAddFriend.$valid && envoyer()">
 		  <label for="inputEmail" class="sr-only">Email address</label>
-		  <input type="text" id="inputPseudo" ng-model="friends.pseudo" class="form-control" placeholder="Pseudo" required autofocus>
+		  <input type="text" id="inputPseudo" ng-model="friends.pseudo" class="form-control"  ng-minlength="4" ng-maxlength="15" name="pseudo" placeholder="Pseudo" required autofocus>
 		  <br>
-		  <input type="email" id="inputEmail" ng-model="friends.email" class="form-control" placeholder="Email address" required >
+		  <input type="email" id="inputEmail" ng-model="friends.email" class="form-control" name="email" placeholder="Email address" required >
+		  <span class="error" ng-show="FormAddFriend.pseudo.$error.minlength">
+		    Pseudo Too short!<br></span>
+		  <span class="error" ng-show="FormAddFriend.pseudo.$error.maxlength">
+		    Pseudo Too long!<br></span> 
+		  <span class="error" ng-show="FormAddFriend.email.$error.email">
+		    Enter a valid email address!<br></span>
 		  <br>
 		  <button class="btn btn-lg btn-primary btn-block" type="submit">Ajouter</button>
 		</form>
@@ -56,30 +62,42 @@
 		<h4 class="modal-title" id="myModalLabel">Ajouter un groupe</h4>
 	      </div>
 	      <div class="modal-body">
-		<form class="form-signin" ng-submit="send()">
+		<form  class="form-signin" name="FormAddGroup" ng-submit="FormAddGroup.$valid && send()">
 		  <label for="inputGroupName" class="sr-only">Group name</label>
-		  <input type="text" id="inputGroupName" ng-model="groups.nameGroupe" class="form-control" placeholder="Group name" required autofocus>
+		  <input type="text" id="inputGroupName" ng-model="groups.nameGroupe" name="GroupName" ng-minlength="4" ng-maxlength="25" class="form-control" placeholder="Group name" required autofocus>
 		  <br>
 		  <label for="inputGroupName" class="sr-only">Member</label>
 		  <div class="form-signin" ng-repeat="number in MemberNumber" >
 
 		    <div href ng-if="$first || $index==1"  >
-		      <input type="text" list="amis" ng-model="groups.membres[number].pseudo" ng-change="changePseudo(number)" class="form-control" placeholder="Member pseudo"  required>
+		      <input type="text" list="amis" ng-minlength="4" ng-maxlength="15" name="pseudo_{{$index}}" ng-model="groups.membres[number].pseudo" ng-change="changePseudo(number)" ng-required="true" class="form-control" placeholder="Member pseudo"  required>
 		      
 		    </div>
 
 		    <div href ng-if="!$first && $index !=1 "  >
-		      <input type="text" list="amis" ng-model="groups.membres[number].pseudo" class="form-control"
+		      <input type="text" list="amis" ng-minlength="4" ng-maxlength="15" name="pseudo_{{$index}}"  ng-model="groups.membres[number].pseudo" class="form-control"
 			     placeholder="Member pseudo"  >
 		      
 		    </div>
-		    <input type="email" ng-model="groups.membres[number].email" class="form-control" 
+		    <span class="error" ng-show="FormAddGroup['pseudo_{{$index}}'].$error.minlength ">
+		      Member pseudo Too short!</span>
+		    <span class="error" ng-show="FormAddGroup['pseudo_{{$index}}'].$error.maxlength">
+		      Member pseudo Too long!</span> 
+		    <input type="email" ng-model="groups.membres[number].email" name="email_{{$index}}" class="form-control" 
 			   placeholder="Member mail" >
-
+		    <span class="error" ng-show="FormAddGroup['email_{{$index}}'].$error.email">
+		      Enter a valid email address!<br></span>
 		  </div>
 		  
 
-		  <a href ng-click="add()"> Ajouter un autre membre </a>
+		  <a href ng-click="add()"> Ajouter un autre membre </a><br/>
+
+		  <span class="error" ng-show="FormAddGroup.GroupName.$error.minlength">
+		    Group name Too short!<br></span>
+		  <span class="error" ng-show="FormAddGroup.GroupName.$error.maxlength">
+		    Group name Too long!<br></span> 
+		  
+		  
 		  <button class="btn btn-lg btn-primary btn-block" type="submit">Ajouter</button>
 		</form>
 	      </div>
