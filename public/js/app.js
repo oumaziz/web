@@ -5,16 +5,74 @@ app.config(['$routeProvider', function ($routeProvider) {
     .when('/register', {templateUrl: 'js/views/register.html', controller: 'RegisterController'})
     .when('/dashboard', {templateUrl: 'js/views/dashboard.html', controller: 'DashboardController'})
     .when('/dashboard/friends', {templateUrl: 'js/views/friends.html', controller: 'FriendsController'})
+    .when('/dashboard/groups', {templateUrl: 'js/views/groups.html', controller: 'GroupsController'})
     .when('/', {templateUrl: 'js/views/login.html', controller: 'LoginController'})
     .otherwise({redirectTo: '/'});
 }]);
 
 app.controller("DashboardController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
   function ($scope, $resource, $rootScope, $cookies, $location, Notification){
+var Friends = $resource("http://localhost:3000/users/friends");
 
+    $scope.friends = new Friends();
+
+    Friends.query(function(result){
+
+        $scope.Listefriends = result;
+    })
     if($rootScope.currentUser == null) $location.path('/');
 
     console.log("dans le dash")    
+
+}]);
+
+app.controller("GroupsController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
+  function ($scope, $resource, $rootScope, $cookies, $location, Notification){
+var Groups = $resource("http://localhost:3000/users/groups");
+
+    $scope.groups = new Groups();
+
+    Groups.query(function(result){
+
+        $scope.Listegroups = result;
+    })
+ $scope.MemberNumber = [1,2];
+ $scope.groups.membres = [];
+ $scope.groups.membres[0] = {pseudo:$rootScope.currentUser.pseudo,
+ email:$rootScope.currentUser.email
+
+}
+var addMember= $scope.MemberNumber.length+1;
+
+$scope.changePseudo = function(number) {
+
+for(var j=0; j <$scope.Listefriends.length; j++ ) {
+if($scope.groups.membres[number].pseudo==$scope.Listefriends[j].pseudo)   $scope.groups.membres[number].email=$scope.Listefriends[j].email;
+}
+}
+ 
+      
+  
+   
+
+     $scope.add = function() {
+            $scope.MemberNumber.push(addMember++);
+        }
+
+    $scope.send = function() {
+
+      $scope.groups.$save(function(result){
+	
+        if(result.error == null){
+            location.reload();
+
+        }else{
+            Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
+        }
+    }).catch(function(req){
+        Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
+    });
+}
 
 }]);
 
@@ -25,21 +83,15 @@ app.controller("FriendsController", ['$scope', '$resource', '$rootScope', '$cook
 
     $scope.friends = new Friends();
 
-    Friends.query(function(result){
-
-        $scope.Listefriends = result;
-    })
+   
 
     $scope.envoyer = function() {
 
       $scope.friends.$save(function(result){
 
         if(result.error == null){
-            Friends.query(function(result){
-
-               $scope.Listefriends=result;
-           })
-
+ 		location.reload(); 
+           
         }else{
             Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
         }
