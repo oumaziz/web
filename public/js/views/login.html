@@ -1,14 +1,20 @@
 <div class="col-md-6 col-md-offset-3" ng-controller="LoginController" ng-hide="currentUser">
-	<br><br><br>
-	<form class="form-signin" ng-submit="envoyer()">
-		<h2 class="form-signin-heading">Connexion</h2>
-		<label for="inputEmail" class="sr-only">Email address</label>
-		<input type="email" id="inputEmail" ng-model="login.email" class="form-control" placeholder="Email address" required autofocus>
-		<br>
-		<label for="inputPassword" class="sr-only">Password</label>
-		<input type="password" id="inputPassword" ng-model="login.password" class="form-control" placeholder="Password" required>
-		<br>
-		<button class="btn btn-lg btn-primary btn-block" type="submit">Se connecter</button>
-	</form>
-	<br><p class="text-center"><a href="#/register">Je n'ai pas de compte</a></p>
+  <br><br><br>
+  <form novalidate class="form-signin" name="FormLogin" ng-submit="FormLogin.$valid && envoyer()">
+    <h2 class="form-signin-heading">Connexion</h2>
+    <label for="inputEmail" class="sr-only">Email address</label>
+    <input type="email" id="inputEmail" ng-model="login.email" class="form-control" name="email" placeholder="Email address" required autofocus>
+    <br>
+    <label for="inputPassword" class="sr-only">Password</label>
+    <input type="password" id="inputPassword" ng-model="login.password" name="password" ng-minlength="6" ng-maxlength="15" class="form-control" placeholder="Password" required>
+    <span class="error" ng-show="FormLogin.password.$error.minlength">
+      Password Too short!</span>
+    <span class="error" ng-show="FormLogin.password.$error.maxlength">
+      Password Too long!</span>
+    <span class="error" ng-show="FormLogin.email.$error.email">
+      Enter a valid email address!</span>
+    <br>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Se connecter</button>
+  </form>
+  <br><p class="text-center"><a href="#/register">Je n'ai pas de compte</a></p>
 </div>
