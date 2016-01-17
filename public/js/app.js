@@ -12,7 +12,7 @@ app.config(['$routeProvider', function ($routeProvider) {
 
 app.controller("DashboardController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
 				       function ($scope, $resource, $rootScope, $cookies, $location, Notification){
-					  
+					   
 					   if($rootScope.currentUser == null) $location.path('/');
 
 					   console.log("dans le dash")    
@@ -29,13 +29,15 @@ app.controller("GroupsController", ['$scope', '$resource', '$rootScope', '$cooki
 
 					    $scope.Listegroups = result;
 					})
+
+					
 					$scope.MemberNumber = [1,2];
 					$scope.groups.membres = [];
 					$scope.groups.membres[0] = {
 					    pseudo:$rootScope.currentUser.pseudo,
 					    email:$rootScope.currentUser.email
 
-					   }
+					}
 					var addMember= $scope.MemberNumber.length+1;
 
 					$scope.changePseudo = function(number) {
@@ -46,7 +48,10 @@ app.controller("GroupsController", ['$scope', '$resource', '$rootScope', '$cooki
 					    }
 					}
 					
-					
+					$scope.remove = function(number) {
+					    var index = this.MemberNumber.indexOf(number);
+					    this.MemberNumber.splice(index, 1);
+					};
 					
 					
 
@@ -79,10 +84,10 @@ app.controller("FriendsController", ['$scope', '$resource', '$rootScope', '$cook
 
 					 $scope.friends = new Friends();
 
-					   Friends.query(function(result){
+					 Friends.query(function(result){
 
-					       $rootScope.Listefriends = result;
-					   })
+					     $rootScope.Listefriends = result;
+					 })
 					 
 
 					 $scope.envoyer = function() {
@@ -101,6 +106,25 @@ app.controller("FriendsController", ['$scope', '$resource', '$rootScope', '$cook
 					     });
 					 }
 				     }]);
+
+
+app.controller("FriendsRemoveController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
+					   function ($scope, $resource, $rootScope, $cookies, $location, Notification){
+
+					       var FriendsRemove = $resource("http://localhost:3000/users/friends/:email");
+
+					       $scope.friendsRemove = new FriendsRemove();
+
+					       $scope.removeFriend = function(emailFriend) {
+						   FriendsRemove.remove({email : emailFriend},function(result){
+
+						       location.reload();
+						   })
+					       }
+
+					       
+					   }]);
+
 
 app.controller("LoginController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
 				   function ($scope, $resource, $rootScope, $cookies, $location, Notification){
