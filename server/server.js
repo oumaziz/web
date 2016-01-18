@@ -130,31 +130,30 @@ MongoClient.connect(url, function(err, db) {
 		var cursor = friends.find({$or : [ { "user.email" : req.session.user.email }, { "friend.email" : req.session.user.email } ]})
 		cursor.toArray(function(err, data) {
 		    if (err) return next(err)
-		   
+		    
 		    var tab = new Array()
 		    var length = Object.keys(data).length; 
 		    for (var i = 0; i <length; i++) 
 		    {
-					tab[i] = {};
-					tab[i].id = data[i]._id;
-					tab[i].expenses=new Array();
- 					tab[i].expenses=data[i].expenses;
-				
+			tab[i] = {};
+			tab[i].id = data[i]._id;
+			tab[i].expenses=new Array();
+ 			tab[i].expenses=data[i].expenses;
+			
 			if(data[i].friend.email == req.session.user.email){
 			    tab[i].email = data[i].user.email; 
 			    tab[i].pseudo = data[i].user.pseudo;  }
- 
+			
 			else {	
-					
-					tab[i].email = data[i].friend.email;  
-					tab[i].pseudo = data[i].friend.pseudo;  
+			    
+			    tab[i].email = data[i].friend.email;  
+			    tab[i].pseudo = data[i].friend.pseudo;  
 
-					
- 				}
+			    
+ 			}
 
 		    }	
 
-		     console.log(data)
 		    res.jsonp(tab)
 		})
 	    })
@@ -170,174 +169,181 @@ MongoClient.connect(url, function(err, db) {
 				}, function(err, friend){
 				    if(err) return;
 				    console.log("ami supprimé")
+				    res.send("ami supprimé")
 				}
 			      )
 	    })
 	});
 
 	app.post('/users/friends/update', function(req, res) {
-			db.collection("friends", function(err, friends) {
-			friends.findOne( { $or : [ 
-						{$and : [ { "user.email" : req.session.user.email }, { "friend.email": req.body.CurrentFriend.email} ]},
-						{$and : [ { "friend.email" : req.session.user.email }, { "user.email": req.body.CurrentFriend.email} ]}
-									] 
-					},function(err, friend){
-					if(err) return;
-			console.log(friend);		
-if(friend.user.email == req.session.user.email )
-{
-		friends.update( { $and : [ { "user.email" : req.session.user.email }, { "friend.email": req.body.CurrentFriend.email} ]},{
-	"friend.pseudo": req.body.CurrentFriend.pseudo
-	},function(err, friend){console.log("ami modifié") })
-									
-}
-else {
-	console.log("je suis pas la");
-friends.update( { $and : [ { "user.email" : req.body.CurrentFriend.email }, { "friend.email": req.session.user.email} ]},{
-	"user.pseudo": req.body.CurrentFriend.pseudo
-	},function(err, friend){console.log("ami modifié");})
-}
-}
-				)
-			})			
-		});
+	    db.collection("friends", function(err, friends) {
+		friends.findOne( { $or : [ 
+		    {$and : [ { "user.email" : req.session.user.email }, { "friend.email": req.body.CurrentFriend.email} ]},
+		    {$and : [ { "friend.email" : req.session.user.email }, { "user.email": req.body.CurrentFriend.email} ]}
+		] 
+				 },function(err, friend){
+				     if(err) return;
+				     if(friend.user.email == req.session.user.email )
+				     {
+					 friends.update( {_id: friend._id},
+							 {$set: {"friend.pseudo": req.body.CurrentFriend.pseudo
+								}},function(err, friend){
+								    console.log("ami modifié") 
+								    res.send("ami modifié")
+
+								})
+					 
+				     }
+				     else {
+					 friends.update( { _id: friend._id},{$set:{
+					     "user.pseudo": req.body.CurrentFriend.pseudo
+					 }},function(err, friend){
+					     console.log("ami modifié");
+					     res.send("ami modifié")
+
+					 })
+				     }
+				 }
+			       )
+	    })			
+	});
 
     })
 
     db.collection("groups", function(err, groups) {
 
-		app.get('/users/groups', function(req, res) {
+	app.get('/users/groups', function(req, res) {
 
-		    //groupes non partagé
-		    var cursor = groups.find({"membres.0.email": req.session.user.email})
-		    //dans le cas du pseudo juste
-		    //			var cursor = groups.find({membres: { $all:[req.session.user.pseudo]}})
-		    //dans le cas des groupes partagé
-		    //			var cursor = groups.find({membres: {$elemMatch: {email:req.session.user.email}}})
-		    cursor.toArray(function(err, data) {
-			if (err) return next(err)
+	    //groupes non partagé
+	    var cursor = groups.find({"membres.0.email": req.session.user.email})
+	    //dans le cas du pseudo juste
+	    //			var cursor = groups.find({membres: { $all:[req.session.user.pseudo]}})
+	    //dans le cas des groupes partagé
+	    //			var cursor = groups.find({membres: {$elemMatch: {email:req.session.user.email}}})
+	    cursor.toArray(function(err, data) {
+		if (err) return next(err)
 
-			var tab=new Array()
-			var length = Object.keys(data).length; 
-			for (var i = 0; i <length; i++) 
-			{	
+		var tab=new Array()
+		var length = Object.keys(data).length; 
+		for (var i = 0; i <length; i++) 
+		{	
 
-			    tab[i]= {}
-			    tab[i].id = data[i]._id;
-			    tab[i].nameGroupe= data[i].nameGroupe;
-			    tab[i].membres=new Array();
-			    var k=0;
-			    var lengthMembres = Object.keys(data[i].membres).length;
-			    for (var j = 0; j <lengthMembres; j++) 
-			    {
-
-				if(data[i].membres[j].pseudo != req.session.user.pseudo)
-				{
-				    tab[i].membres[k] = { pseudo: data[i].membres[j].pseudo,
-							  email: data[i].membres[j].email
-							}
-				    k++;
-				    
-				}  
-			    }
-			    tab[i].expenses=new Array();
- 				tab[i].expenses=data[i].expenses;
-			    
-			}
-			
-			res.jsonp(tab)
-		    })
-
-		});
-
-		app.post('/users/groups', function(req, res) {
-		    if(req.body.nameGroupe.length < 4) return res.json({error:"Nom du groupe trop court"}).end()
-		    var lengthMembres = Object.keys(req.body.membres).length;
+		    tab[i]= {}
+		    tab[i].id = data[i]._id;
+		    tab[i].nameGroupe= data[i].nameGroupe;
+		    tab[i].membres=new Array();
+		    var k=0;
+		    var lengthMembres = Object.keys(data[i].membres).length;
 		    for (var j = 0; j <lengthMembres; j++) 
 		    {
-			if(req.body.membres[j].pseudo.length < 4) return res.json({error:"Pseudo trop court"}).end()
+
+			if(data[i].membres[j].pseudo != req.session.user.pseudo)
+			{
+			    tab[i].membres[k] = { pseudo: data[i].membres[j].pseudo,
+						  email: data[i].membres[j].email
+						}
+			    k++;
+			    
+			}  
 		    }
-		    var Expenses= new Array();
-		    groups.insert({nameGroupe:req.body.nameGroupe, membres:req.body.membres , expenses:Expenses}, function(err, groups){
-			console.log("Insertion groupe reussie")
-			res.json(groups.ops[0]).end()
-		    })
-
-		});
-
-		app.post('/users/groups/expenses', function(req, res) {	
-
-			if(req.body.payer == null) return res.json({"error" : "Veuillez saisir tous les champs."})
-			if(req.body.balance == null) return res.json({"error" : "Veuillez saisir tous les champs."})
-
-			if(err) return res.json({"error" : "accès impossible à la base de données."});
-
-			var cursor = groups.find({"_id":mongo.ObjectID(req.body.groupe)})
-
-			cursor.toArray(function(err, data) {
-
-				for (var i = req.body.balance.length - 1; i >= 0; i--) {
-					req.body.balance[i].user = req.body.balance[i].user.email
-				};
-
-				var expense = {
-					"_id" : mongo.ObjectID(),
-					"cost" : req.body.cost,
-					"description" : req.body.description,
-					"payer" : req.body.payer,
-					"date" : req.body.date,
-					"balance" : req.body.balance
-				}
-					
-				data[0].expenses.push(expense)
-
-				groups.update({"_id":data[0]._id}, {$set:{"expenses":data[0].expenses}}, function(err, result){
-					console.log("le update retourne : "+result)
-					res.json(data[0])
-				})
-			})
-		})
-    })
-
-	db.collection("friends", function(err, friends) {
-
-		app.post('/users/friends/expenses', function(req, res) {	
-
-				if(req.body.payer == null) return res.json({"error" : "Veuillez saisir tous les champs."})
-				if(req.body.owe == null) return res.json({"error" : "Veuillez saisir tous les champs."})
-				if(err) return res.json({"error" : "accès impossible à la base de données."});
-
-				var cursor = friends.find(
-					{ 
-						$or : [ 
-						{$and : [ { "user.email" : req.session.user.email}, { "friend.email": req.body.friend} ]},
-						{$and : [ { "friend.email" : req.session.user.email }, { "user.email": req.body.friend} ]}
-						] 
-					}
-				)
-
-				cursor.toArray(function(err, data) {
-
-					var expense = {
-						"_id" : mongo.ObjectID(),
-						"cost" : req.body.cost,
-						"description" : req.body.description,
-						"payer" : req.body.payer,
-						"date" : req.body.date,
-						"owe" : req.body.owe
-					}
-
-					data[0].expenses.push(expense)
-
-					friends.update({"_id":data[0]._id}, {$set:{"expenses":data[0].expenses}}, function(err, result){
-						res.json(data[0])
-					})
-				})
-		})
+		    tab[i].expenses=new Array();
+ 		    tab[i].expenses=data[i].expenses;
+		    
+		}
+		
+		res.jsonp(tab)
+	    })
 
 	});
 
+	app.post('/users/groups', function(req, res) {
+	    if(req.body.nameGroupe.length < 4) return res.json({error:"Nom du groupe trop court"}).end()
+	    var lengthMembres = Object.keys(req.body.membres).length;
+	    for (var j = 0; j <lengthMembres; j++) 
+	    {
+		if(req.body.membres[j].pseudo.length < 4) return res.json({error:"Pseudo trop court"}).end()
+	    }
+	    var Expenses= new Array();
+	    groups.insert({nameGroupe:req.body.nameGroupe, membres:req.body.membres , expenses:Expenses}, function(err, groups){
+		console.log("Insertion groupe reussie")
+		res.json(groups.ops[0]).end()
+	    })
+
+	});
+
+	app.post('/users/groups/expenses', function(req, res) {	
+
+	    if(req.body.payer == null) return res.json({"error" : "Veuillez saisir tous les champs."})
+	    if(req.body.balance == null) return res.json({"error" : "Veuillez saisir tous les champs."})
+
+	    if(err) return res.json({"error" : "accès impossible à la base de données."});
+
+	    var cursor = groups.find({"_id":mongo.ObjectID(req.body.groupe)})
+
+	    cursor.toArray(function(err, data) {
+
+		for (var i = req.body.balance.length - 1; i >= 0; i--) {
+		    req.body.balance[i].user = req.body.balance[i].user.email
+		};
+
+		var expense = {
+		    "_id" : mongo.ObjectID(),
+		    "cost" : req.body.cost,
+		    "description" : req.body.description,
+		    "payer" : req.body.payer,
+		    "date" : req.body.date,
+		    "balance" : req.body.balance
+		}
+		
+		data[0].expenses.push(expense)
+
+		groups.update({"_id":data[0]._id}, {$set:{"expenses":data[0].expenses}}, function(err, result){
+		    console.log("le update retourne : "+result)
+		    res.json(data[0])
+		})
+	    })
+	})
+    })
+
+    db.collection("friends", function(err, friends) {
+
+	app.post('/users/friends/expenses', function(req, res) {	
+
+	    if(req.body.payer == null) return res.json({"error" : "Veuillez saisir tous les champs."})
+	    if(req.body.owe == null) return res.json({"error" : "Veuillez saisir tous les champs."})
+	    if(err) return res.json({"error" : "accès impossible à la base de données."});
+
+	    var cursor = friends.find(
+		{ 
+		    $or : [ 
+			{$and : [ { "user.email" : req.session.user.email}, { "friend.email": req.body.friend} ]},
+			{$and : [ { "friend.email" : req.session.user.email }, { "user.email": req.body.friend} ]}
+		    ] 
+		}
+	    )
+
+	    cursor.toArray(function(err, data) {
+
+		var expense = {
+		    "_id" : mongo.ObjectID(),
+		    "cost" : req.body.cost,
+		    "description" : req.body.description,
+		    "payer" : req.body.payer,
+		    "date" : req.body.date,
+		    "owe" : req.body.owe
+		}
+
+		data[0].expenses.push(expense)
+
+		friends.update({"_id":data[0]._id}, {$set:{"expenses":data[0].expenses}}, function(err, result){
+		    res.json(data[0])
+		})
+	    })
+	})
+
+    });
+
     app.listen(3000, function() {
-		console.log("Server running...")
+	console.log("Server running...")
     })
 })
