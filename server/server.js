@@ -249,7 +249,7 @@ friends.update( { $and : [ { "user.email" : req.body.email }, { "friend.email": 
 		});
 
 		app.post('/users/groups', function(req, res) {
-		    if(req.body.membres[j].pseudo.length < 4) return res.json({error:"Nom du groupe trop court"}).end()
+		    if(req.body.nameGroupe.length < 4) return res.json({error:"Nom du groupe trop court"}).end()
 		    var lengthMembres = Object.keys(req.body.membres).length;
 		    for (var j = 0; j <lengthMembres; j++) 
 		    {
