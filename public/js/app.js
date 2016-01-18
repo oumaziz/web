@@ -89,7 +89,10 @@ app.controller("FriendsController", ['$scope', '$resource', '$rootScope', '$cook
 
                          $rootScope.Listefriends = result;
                      })
-                     
+                     $scope.FriendView = function(friend) {
+                        $scope.CurrentFriend=friend;
+
+                     }
 
                      $scope.envoyer = function() {
 
@@ -106,21 +109,70 @@ app.controller("FriendsController", ['$scope', '$resource', '$rootScope', '$cook
                          Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
                          });
                      }
+
+                       var FriendsUpdate = $resource("http://localhost:3000/users/friends/update");
+
+                           $scope.friendsUpdate = new FriendsUpdate();
+                           $scope.update = function() {
+                            $scope.friendsUpdate.$save(function(result){
+
+                            if(result.error == null){
+
+                             location.reload(); 
+                             
+                         }else{
+                             Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
+                         }
+                         }).catch(function(req){
+                         Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
+                         });
+                           }
+
+                      
+
+
+
+
                      }]);
 
 
 app.controller("FriendsRemoveController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
                        function ($scope, $resource, $rootScope, $cookies, $location, Notification){
 
-                           var FriendsRemove = $resource("http://localhost:3000/users/friends/:email");
+                          var FriendsRemove = $resource("http://localhost:3000/users/friends/:email");
 
                            $scope.friendsRemove = new FriendsRemove();
 
-                           $scope.removeFriend = function(emailFriend) {
-                           FriendsRemove.remove({email : emailFriend},function(result){
-
-                               location.reload();
+                           $scope.removeFriend = function(CurrentFri) {
+                           FriendsRemove.remove({email : CurrentFri.email},function(result){
+                              if(result.error == null){
+                               location.reload(); }
                            })
+                           }
+
+                           
+                       }]);
+
+app.controller("FriendsUpdateController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
+                       function ($scope, $resource, $rootScope, $cookies, $location, Notification){
+
+                           var FriendsUpdate = $resource("http://localhost:3000/users/friends/update");
+
+                           $scope.friendsUpdate = new FriendsUpdate();
+                           $scope.CurrentF =$rootScope.CurrentFriend;
+                           $scope.update = function() {
+                            $scope.friendsUpdate.$save(function(result){
+
+                            if(result.error == null){
+
+                             location.reload(); 
+                             
+                         }else{
+                             Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
+                         }
+                         }).catch(function(req){
+                         Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
+                         });
                            }
 
                            
