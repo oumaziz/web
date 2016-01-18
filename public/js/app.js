@@ -10,252 +10,383 @@ app.config(['$routeProvider', function ($routeProvider) {
     .otherwise({redirectTo: '/'});
 }]);
 
-app.controller("DashboardController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
-                       function ($scope, $resource, $rootScope, $cookies, $location, Notification){
-                       
-                       if($rootScope.currentUser == null) $location.path('/');
 
-                       console.log("dans le dash")    
+app.controller("ExpensesManagerController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
+   function ($scope, $resource, $rootScope, $cookies, $location, Notification){
 
-                       }]);
+    $rootScope.owe = []
+    $rootScope.owed = []
 
-app.controller("GroupsController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
-                    function ($scope, $resource, $rootScope, $cookies, $location, Notification){
-                    var Groups = $resource("http://localhost:3000/users/groups");
+    $rootScope.initFromFriends = function(){
+        for (var i = 0; i < $rootScope.Listefriends.length; i++) {
+            $rootScope.owe.push({"user":$rootScope.Listefriends[i].pseudo, "email":$rootScope.Listefriends[i].email,"expenses":[]})
+            $rootScope.owed.push({"user":$rootScope.Listefriends[i].pseudo, "email":$rootScope.Listefriends[i].email,"expenses":[]})
 
-                    $scope.groups = new Groups();
+            for (var j = 0; j < $rootScope.Listefriends[i].expenses.length; j++) {
+                if($rootScope.Listefriends[i].expenses[j].payer != $rootScope.currentUser.email)
+                    $rootScope.owed[i].expenses.push({
+                        "amount":$rootScope.Listefriends[i].expenses[j].owe,
+                        "description":$rootScope.Listefriends[i].expenses[j].description
+                    })
+                else
+                    $rootScope.owe[i].expenses.push({
+                        "amount":$rootScope.Listefriends[i].expenses[j].owe,
+                        "description":$rootScope.Listefriends[i].expenses[j].description
+                    })
+            };
+        };
+    }
 
-                    Groups.query(function(result){
+    $rootScope.insertExpenseFromGroup = function(expense, position, state){
 
-                        $scope.Listegroups = result;
-                        $rootScope.myGroups = result
+        var found = false
+
+        if(state == true){
+            for (var i = 0; i < expense.balance.length; i++) {
+                found = false
+                
+                if(expense.balance[i].user != $rootScope.currentUser.email){
+                    for (var j = 0; j < $rootScope.owe.length; j++) {
+                        if($rootScope.owe[j].email == expense.balance[i].user){
+                            $rootScope.owe[j].expenses.push({
+                                "amount":expense.balance[i].owe,
+                                "description":expense.description
+                            })
+
+                            found = true
+                            break
+                        }
+                    };
+
+                    if(!found){
+                        $rootScope.owe.push({
+                            "user":$rootScope.getMembre($rootScope.myGroups[position], expense.balance[i].user), 
+                            "email":expense.balance[i].user,
+                            "expenses":[{
+                                "amount":expense.balance[i].owe,
+                                "description":expense.description
+                            }]
+                        })
+                    }
+                }
+            };
+            
+        }else{
+            for (var i = 0; i < $rootScope.owed.length; i++) {
+                if($rootScope.owed[i].email == expense.payer){
+                    $rootScope.owed[i].expenses.push({
+                        "amount":$rootScope.getOweFromExpense(expense.balance ,$rootScope.currentUser.email),
+                        "description":expense.description
                     })
 
-                    
-                    $scope.MemberNumber = [1,2];
-                    $scope.groups.membres = [];
-                    $scope.groups.membres[0] = {
-                        pseudo:$rootScope.currentUser.pseudo,
-                        email:$rootScope.currentUser.email
+                    found = true
+                    break
+                }
+            };
 
-                    }
-                    var addMember= $scope.MemberNumber.length+1;
+            if(!found){
+                $rootScope.owed.push({
+                    "user":$rootScope.getMembre($rootScope.myGroups[position], expense.payer), 
+                    "email":expense.payer,
+                    "expenses":[{
+                        "amount":$rootScope.getOweFromExpense(expense.balance ,$rootScope.currentUser.email),
+                        "description":expense.description
+                    }]
+                })   
+            }
 
-                    $scope.changePseudo = function(number) {
+        }
+    }
 
-                        for(var j=0; j <$scope.Listefriends.length; j++ ) {
-                        if($scope.groups.membres[number].pseudo==$scope.Listefriends[j].pseudo) 
-                            $scope.groups.membres[number].email=$scope.Listefriends[j].email;
-                        }
-                    }
-                    
-                    $scope.remove = function(number) {
-                        var index = this.MemberNumber.indexOf(number);
-                        this.MemberNumber.splice(index, 1);
-                    };
-                    
-                    
+    $rootScope.getOweFromExpense = function(balance, email){
+        for (var i = 0; i < balance.length; i++) {
+            if(balance[i].user == email)
+                return balance[i].owe
+        };
+    }
 
-                    $scope.add = function() {
-                        $scope.MemberNumber.push(addMember++);
-                    }
+    $rootScope.getSum = function(expenses){
+        var sum = 0
 
-                    $scope.send = function() {
+        for (var i = 0; i < expenses.length; i++) {
+            sum += expenses[i].amount
+        };
 
-                        $scope.groups.$save(function(result){
-                        
-                        if(result.error == null){
+        return sum
+    }
+    
+    $rootScope.getMembre = function(group, email){
+        var pseudo
 
-                            location.reload();
+        for (var i = 0; i < group.membres.length; i++) {
+            if(group.membres[i].email == email){
+                pseudo = group.membres[i].pseudo
+                break
+            }
+        };
 
-                        }else{
-                            Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
-                        }
-                        }).catch(function(req){
-                        Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
-                        });
-                    }
+        return pseudo
+    }
 
-                    }]);
+    $rootScope.initFromGroups = function(){
+        for (var i = 0; i < $rootScope.myGroups.length; i++) {
+            for (var j = 0; j < $rootScope.myGroups[i].expenses.length; j++) {
+                if($rootScope.myGroups[i].expenses[j].payer != $rootScope.currentUser.email)
+                    $rootScope.insertExpenseFromGroup($rootScope.myGroups[i].expenses[j], i, false)
+                else
+                    $rootScope.insertExpenseFromGroup($rootScope.myGroups[i].expenses[j], i, true)
+            };
+        };
+    }
+
+}]);
+
+
+app.controller("DashboardController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
+   function ($scope, $resource, $rootScope, $cookies, $location, Notification){
+
+       if($rootScope.currentUser == null) $location.path('/');
+
+   }]);
+
+app.controller("GroupsController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
+    function ($scope, $resource, $rootScope, $cookies, $location, Notification){
+        var Groups = $resource("http://localhost:3000/users/groups");
+
+        $scope.groups = new Groups();
+
+        Groups.query(function(result){
+
+            $scope.Listegroups = result;
+            $rootScope.myGroups = result
+            $rootScope.initFromGroups()
+        })
+
+
+        $scope.MemberNumber = [1,2];
+        $scope.groups.membres = [];
+        $scope.groups.membres[0] = {
+            pseudo:$rootScope.currentUser.pseudo,
+            email:$rootScope.currentUser.email
+
+        }
+        var addMember= $scope.MemberNumber.length+1;
+
+        $scope.changePseudo = function(number) {
+
+            for(var j=0; j <$scope.Listefriends.length; j++ ) {
+                if($scope.groups.membres[number].pseudo==$scope.Listefriends[j].pseudo) 
+                    $scope.groups.membres[number].email=$scope.Listefriends[j].email;
+            }
+        }
+
+        $scope.remove = function(number) {
+            var index = this.MemberNumber.indexOf(number);
+            this.MemberNumber.splice(index, 1);
+        };
+
+
+
+        $scope.add = function() {
+            $scope.MemberNumber.push(addMember++);
+        }
+
+        $scope.send = function() {
+
+            $scope.groups.$save(function(result){
+
+                if(result.error == null){
+
+                    location.reload();
+
+                }else{
+                    Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
+                }
+            }).catch(function(req){
+                Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
+            });
+        }
+
+    }]);
 
 app.controller("FriendsController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
-                     function ($scope, $resource, $rootScope, $cookies, $location, Notification){
+ function ($scope, $resource, $rootScope, $cookies, $location, Notification){
 
-                     var Friends = $resource("http://localhost:3000/users/friends");
+     var Friends = $resource("http://localhost:3000/users/friends");
 
-                     $scope.friends = new Friends();
+     $scope.friends = new Friends();
 
-                     var FriendsUpdate = $resource("http://localhost:3000/users/friends/update");
+     var FriendsUpdate = $resource("http://localhost:3000/users/friends/update");
 
-                      $scope.friendsUpdate = new FriendsUpdate();
+     $scope.friendsUpdate = new FriendsUpdate();
 
-                     Friends.query(function(result){
+     Friends.query(function(result){
 
-                         $rootScope.Listefriends = result;
-                     })
-                     $scope.FriendView = function(friend) {
-                        $scope.friendsUpdate.CurrentFriend=friend;
+         $rootScope.Listefriends = result;
+         $rootScope.initFromFriends()
+     })
+     $scope.FriendView = function(friend) {
+        $scope.friendsUpdate.CurrentFriend=friend;
 
-                     }
+    }
 
-                     $scope.envoyer = function() {
+    $scope.envoyer = function() {
 
-                         $scope.friends.$save(function(result){
+     $scope.friends.$save(function(result){
 
-                         if(result.error == null){
+         if(result.error == null){
 
-                             location.reload(); 
-                             
-                         }else{
-                             Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
-                         }
-                         }).catch(function(req){
-                         Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
-                         });
-                     }
+             location.reload(); 
 
-                       
-                           $scope.update = function() {
-                            $scope.friendsUpdate.$save(function(result){
+         }else{
+             Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
+         }
+     }).catch(function(req){
+         Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
+     });
+ }
 
-                            if(result.error == null){
 
-                             location.reload(); 
-                             
-                         }else{
-                             Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
-                         }
-                         }).catch(function(req){
-                         Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
-                         });
-                           }
+ $scope.update = function() {
+    $scope.friendsUpdate.$save(function(result){
 
-                      
+        if(result.error == null){
 
+         location.reload(); 
+
+     }else{
+         Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
+     }
+ }).catch(function(req){
+     Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
+ });
+}
 
 
 
-                     }]);
+
+
+
+}]);
 
 
 app.controller("FriendsRemoveController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
-                       function ($scope, $resource, $rootScope, $cookies, $location, Notification){
+   function ($scope, $resource, $rootScope, $cookies, $location, Notification){
 
-                          var FriendsRemove = $resource("http://localhost:3000/users/friends/:email");
+      var FriendsRemove = $resource("http://localhost:3000/users/friends/:email");
 
-                           $scope.friendsRemove = new FriendsRemove();
+      $scope.friendsRemove = new FriendsRemove();
 
-                           $scope.removeFriend = function(CurrentFri) {
-                           FriendsRemove.remove({email : CurrentFri.email},function(result){
-                              if(result.error == null){
-                               location.reload(); }
-                           })
-                           }
+      $scope.removeFriend = function(CurrentFri) {
+       FriendsRemove.remove({email : CurrentFri.email},function(result){
+          if(result.error == null){
+           location.reload(); }
+       })
+   }
 
-                           
-                       }]);
+
+}]);
 
 app.controller("FriendsUpdateController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
-                       function ($scope, $resource, $rootScope, $cookies, $location, Notification){
+   function ($scope, $resource, $rootScope, $cookies, $location, Notification){
 
-                           var FriendsUpdate = $resource("http://localhost:3000/users/friends/update");
+       var FriendsUpdate = $resource("http://localhost:3000/users/friends/update");
 
-                           $scope.friendsUpdate = new FriendsUpdate();
-                           $scope.CurrentF =$rootScope.CurrentFriend;
-                           $scope.update = function() {
-                            $scope.friendsUpdate.$save(function(result){
+       $scope.friendsUpdate = new FriendsUpdate();
+       $scope.CurrentF =$rootScope.CurrentFriend;
+       $scope.update = function() {
+        $scope.friendsUpdate.$save(function(result){
 
-                            if(result.error == null){
+            if(result.error == null){
 
-                             location.reload(); 
-                             
-                         }else{
-                             Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
-                         }
-                         }).catch(function(req){
-                         Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
-                         });
-                           }
+             location.reload(); 
 
-                           
-                       }]);
+         }else{
+             Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
+         }
+     }).catch(function(req){
+         Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
+     });
+ }
+
+
+}]);
 
 
 app.controller("LoginController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
-                   function ($scope, $resource, $rootScope, $cookies, $location, Notification){
+   function ($scope, $resource, $rootScope, $cookies, $location, Notification){
 
-                       if($rootScope.currentUser != null) $location.path('/dashboard');
+       if($rootScope.currentUser != null) $location.path('/dashboard');
 
-                       var Login = $resource("http://localhost:3000/users/login");
+       var Login = $resource("http://localhost:3000/users/login");
 
-                       $scope.login = new Login();
+       $scope.login = new Login();
 
-                       $scope.envoyer = function() {
+       $scope.envoyer = function() {
 
-                       $scope.login.$save(function(result){
+           $scope.login.$save(function(result){
 
-                           if(result.error == null){
-                           $rootScope.currentUser = result;
+               if(result.error == null){
+                   $rootScope.currentUser = result;
 
-                           var dt = new Date();
-                           dt.setMinutes(dt.getMinutes() + 30);   
+                   var dt = new Date();
+                   dt.setMinutes(dt.getMinutes() + 30);   
 
-                           $cookies.putObject("currentUser", $scope.login, {'expires': dt});
-                           $location.path('/dashboard');
-                           }else{
-                           Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
-                           }
-                       }).catch(function(req){
-                           Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
-                       });
-                       }
-                   }]);
+                   $cookies.putObject("currentUser", $scope.login, {'expires': dt});
+                   $location.path('/dashboard');
+               }else{
+                   Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
+               }
+           }).catch(function(req){
+               Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
+           });
+       }
+   }]);
 
 app.controller("RegisterController", ['$scope', '$resource', '$cookies', '$rootScope', '$location', 'Notification',
-                      function ($scope, $resource, $cookies, $rootScope, $location, Notification){
+  function ($scope, $resource, $cookies, $rootScope, $location, Notification){
 
-                      if($rootScope.currentUser != null) $location.path('/dashboard');
+      if($rootScope.currentUser != null) $location.path('/dashboard');
 
-                      var Register = $resource("http://localhost:3000/users/register");
-                      $scope.register = new Register();
+      var Register = $resource("http://localhost:3000/users/register");
+      $scope.register = new Register();
 
-                      $scope.envoyer = function() {
-                          $scope.register.$save(function(result){
+      $scope.envoyer = function() {
+          $scope.register.$save(function(result){
 
-                          if(result.error == null){
-                              $rootScope.currentUser = result;
+              if(result.error == null){
+                  $rootScope.currentUser = result;
 
-                              var dt = new Date();
-                              dt.setMinutes(dt.getMinutes() + 30);  
+                  var dt = new Date();
+                  dt.setMinutes(dt.getMinutes() + 30);  
 
-                              $cookies.putObject("currentUser", $scope.register, {'expires': dt});
-                              $location.path('#/dashboard');
-                          }else{
-                              Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
-                          }
+                  $cookies.putObject("currentUser", $scope.register, {'expires': dt});
+                  $location.path('#/dashboard');
+              }else{
+                  Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
+              }
 
-                          }).catch(function(req){
-                          Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
-                          });
-                      }
-                      }]);
+          }).catch(function(req){
+              Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
+          });
+      }
+  }]);
 
 app.controller("BarController", ['$scope', '$rootScope', '$resource', '$location', '$cookies', 
-                 function ($scope, $rootScope, $resource, $location, $cookies){
+ function ($scope, $rootScope, $resource, $location, $cookies){
 
-                     $rootScope.currentUser = $cookies.getObject("currentUser");
+     $rootScope.currentUser = $cookies.getObject("currentUser");
 
-                     var Logout = $resource("http://localhost:3000/users/logout");
+     var Logout = $resource("http://localhost:3000/users/logout");
 
-                     $scope.deconnexion = function(){
-                     Logout.get();
-                     console.log("deco");
-                     $cookies.remove("currentUser");
-                     $rootScope.currentUser = null;
-                     $location.path('#/');
-                     }
+     $scope.deconnexion = function(){
+         Logout.get();
+         $cookies.remove("currentUser");
+         $rootScope.currentUser = null;
+         $location.path('#/');
+     }
 
-                 }]);
+ }]);
 
 app.controller("GroupExpensesController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
   function ($scope, $resource, $rootScope, $cookies, $location, Notification){
@@ -376,7 +507,7 @@ app.controller("FriendExpensesController", ['$scope', '$resource', '$rootScope',
         if($scope.expense.friend != null){
             var stop = false 
 
-            if($scope.expense.payer == "Vous") 
+            if($scope.expense.payerText == "Vous") 
                 $scope.expense.payer = $rootScope.currentUser.email
             else    
                 $scope.expense.payer = $scope.expense.friend

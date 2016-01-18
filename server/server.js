@@ -138,6 +138,8 @@ MongoClient.connect(url, function(err, db) {
 	    
 	    db.collection("friends", function(err, friends) {
 
+	    	if(err) return;
+
 		var cursor = friends.find({$or : [ { "user.email" : req.session.user.email }, { "friend.email" : req.session.user.email } ]})
 		cursor.toArray(function(err, data) {
 		    if (err) return next(err)
@@ -272,7 +274,7 @@ MongoClient.connect(url, function(err, db) {
 	    {
 		if(req.body.membres[j].pseudo.length < 4) return res.json({error:"Pseudo trop court"}).end()
 
-		if(req.body.membres[j].email == null) req.body.membres[j].email= makeEmail();
+		if((req.body.membres[j].email == null) || (req.body.membres[j].email.length == 0)) req.body.membres[j].email = makeEmail();
 
 	    }
 	    var Expenses= new Array();
@@ -288,6 +290,7 @@ MongoClient.connect(url, function(err, db) {
 
 	    if(req.body.payer == null) return res.json({"error" : "Veuillez saisir tous les champs."})
 	    if(req.body.balance == null) return res.json({"error" : "Veuillez saisir tous les champs."})
+	    if(req.body.payer == null) return res.json({"error" : "Veuillez saisir tous les champs."})
 
 	    if(err) return res.json({"error" : "accès impossible à la base de données."});
 
