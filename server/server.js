@@ -20,6 +20,17 @@ app.use(session({
     saveUninitialized: true
 }))
 
+function makeEmail()
+{
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < 6; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text+"@exemple.fr";
+}
+
 app.use(bodyParser.json()) 
 app.use(bodyParser.urlencoded({ extended: true })) 
 
@@ -262,6 +273,9 @@ MongoClient.connect(url, function(err, db) {
 	    for (var j = 0; j <lengthMembres; j++) 
 	    {
 		if(req.body.membres[j].pseudo.length < 4) return res.json({error:"Pseudo trop court"}).end()
+
+		if(req.body.membres[j].email == null) req.body.membres[j].email= makeEmail();
+	
 	    }
 	    var Expenses= new Array();
 	    groups.insert({nameGroupe:req.body.nameGroupe, membres:req.body.membres , expenses:Expenses}, function(err, groups){
@@ -270,6 +284,7 @@ MongoClient.connect(url, function(err, db) {
 	    })
 
 	});
+
 
 	app.post('/users/groups/expenses', function(req, res) {	
 
