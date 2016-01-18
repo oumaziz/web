@@ -85,12 +85,16 @@ app.controller("FriendsController", ['$scope', '$resource', '$rootScope', '$cook
 
                      $scope.friends = new Friends();
 
+                     var FriendsUpdate = $resource("http://localhost:3000/users/friends/update");
+
+                      $scope.friendsUpdate = new FriendsUpdate();
+
                      Friends.query(function(result){
 
                          $rootScope.Listefriends = result;
                      })
                      $scope.FriendView = function(friend) {
-                        $scope.CurrentFriend=friend;
+                        $scope.friendsUpdate.CurrentFriend=friend;
 
                      }
 
@@ -110,9 +114,7 @@ app.controller("FriendsController", ['$scope', '$resource', '$rootScope', '$cook
                          });
                      }
 
-                       var FriendsUpdate = $resource("http://localhost:3000/users/friends/update");
-
-                           $scope.friendsUpdate = new FriendsUpdate();
+                       
                            $scope.update = function() {
                             $scope.friendsUpdate.$save(function(result){
 
