@@ -140,17 +140,21 @@ MongoClient.connect(url, function(err, db) {
 					tab[i].expenses=new Array();
  					tab[i].expenses=data[i].expenses;
 				
-			if(data[i].friend.email == req.session.user.email)
-			    tab[i].friend = data[i].user;  
+			if(data[i].friend.email == req.session.user.email){
+			    tab[i].email = data[i].user.email; 
+			    tab[i].pseudo = data[i].user.pseudo;  }
+ 
 			else {	
 					
-					tab[i].friend = data[i].friend;  
+					tab[i].email = data[i].friend.email;  
+					tab[i].pseudo = data[i].friend.pseudo;  
+
 					
  				}
 
 		    }	
 
-		     console.log(tab)
+		     console.log(data)
 		    res.jsonp(tab)
 		})
 	    })
@@ -172,27 +176,25 @@ MongoClient.connect(url, function(err, db) {
 	});
 
 	app.post('/users/friends/update', function(req, res) {
-		console.log(req.body.email);
 			db.collection("friends", function(err, friends) {
 			friends.findOne( { $or : [ 
-						{$and : [ { "user.email" : req.session.user.email }, { "friend.email": req.body.email} ]},
-						{$and : [ { "friend.email" : req.session.user.email }, { "user.email": req.body.email} ]}
+						{$and : [ { "user.email" : req.session.user.email }, { "friend.email": req.body.CurrentFriend.email} ]},
+						{$and : [ { "friend.email" : req.session.user.email }, { "user.email": req.body.CurrentFriend.email} ]}
 									] 
 					},function(err, friend){
 					if(err) return;
 			console.log(friend);		
 if(friend.user.email == req.session.user.email )
 {
-	console.log("je suis la");
-	friends.update( { $and : [ { "user.email" : req.session.user.email }, { "friend.email": req.body.email} ]},{
-	"friend.pseudo": req.body.pseudo
+		friends.update( { $and : [ { "user.email" : req.session.user.email }, { "friend.email": req.body.CurrentFriend.email} ]},{
+	"friend.pseudo": req.body.CurrentFriend.pseudo
 	},function(err, friend){console.log("ami modifié") })
 									
 }
 else {
 	console.log("je suis pas la");
-friends.update( { $and : [ { "user.email" : req.body.email }, { "friend.email": req.session.user.email} ]},{
-	"user.pseudo": req.body.pseudo
+friends.update( { $and : [ { "user.email" : req.body.CurrentFriend.email }, { "friend.email": req.session.user.email} ]},{
+	"user.pseudo": req.body.CurrentFriend.pseudo
 	},function(err, friend){console.log("ami modifié");})
 }
 }
