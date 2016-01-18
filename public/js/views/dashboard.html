@@ -4,7 +4,7 @@
 			<div class="panel-heading">Mes amis</div>
 			<div class="panel-body">
 				<ul ng-repeat="friend in Listefriends">
-					<li  > <a href="" ng-click="FriendView(friend.friend)" data-toggle="modal" data-target="#ViewFriend">{{friend.friend.pseudo}}</a></li>
+					<li  > <a href="" ng-click="FriendView(friend)" data-toggle="modal" data-target="#ViewFriend">{{friend.pseudo}}</a></li>
 				</ul>
 				<datalist  id="amis">
 					<option ng-repeat="friend in Listefriends" value={{friend.pseudo}}>
@@ -48,17 +48,17 @@
 											<div class="modal-body">
 												<form  class="form-signin"  name="FormEditFriend" ng-submit="FormEditFriend.$valid && update()">
 													<label for="inputEmail" class="sr-only">Pseudo</label>
-													<input type="text" id="inputPseudo" ng-model="CurrentFriend.pseudo" class="form-control"  ng-minlength="4" ng-maxlength="15" name="pseudo" placeholder="Pseudo" required autofocus>
+													<input type="text" id="inputPseudo" ng-model="friendsUpdate.CurrentFriend.pseudo" class="form-control"  ng-minlength="4" ng-maxlength="15" name="pseudo" placeholder="Pseudo" required autofocus>
 													<br>
 
-													<input type="email" id="inputEmail" ng-model="CurrentFriend.email" class="form-control" ng-hide="true" >
+													<input type="email" id="inputEmail" ng-model="friendsUpdate.CurrentFriend.email" class="form-control" ng-hide="true" >
 													<span class="error" ng-show="FormEditFriend.pseudo.$error.minlength">
 														Pseudo Too short!<br></span>
 														<span class="error" ng-show="FormEditFriend.pseudo.$error.maxlength">
 															Pseudo Too long!<br></span> 
 															<br>
 															<button class="btn btn-lg btn-primary btn-block"  type="submit">Modifier</button>
-															<button class="btn btn-lg btn-primary btn-block" ng-controller="FriendsRemoveController" type="button"  ng-click=removeFriend(CurrentFriend);>Supprimer</button>
+															<button class="btn btn-lg btn-primary btn-block" ng-controller="FriendsRemoveController" type="button"  ng-click=removeFriend(friendsUpdate.CurrentFriend);>Supprimer</button>
 														</form>
 													</div>
 												</div>
