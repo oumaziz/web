@@ -247,15 +247,13 @@ MongoClient.connect(url, function(err, db) {
 		    var lengthMembres = Object.keys(data[i].membres).length;
 		    for (var j = 0; j <lengthMembres; j++) 
 		    {
-
-			if(data[i].membres[j].pseudo != req.session.user.pseudo)
-			{
+			
 			    tab[i].membres[k] = { pseudo: data[i].membres[j].pseudo,
 						  email: data[i].membres[j].email
 						}
 			    k++;
 			    
-			}  
+			 
 		    }
 		    tab[i].expenses=new Array();
  		    tab[i].expenses=data[i].expenses;
@@ -275,7 +273,7 @@ MongoClient.connect(url, function(err, db) {
 		if(req.body.membres[j].pseudo.length < 4) return res.json({error:"Pseudo trop court"}).end()
 
 		if(req.body.membres[j].email == null) req.body.membres[j].email= makeEmail();
-	
+
 	    }
 	    var Expenses= new Array();
 	    groups.insert({nameGroupe:req.body.nameGroupe, membres:req.body.membres , expenses:Expenses}, function(err, groups){
