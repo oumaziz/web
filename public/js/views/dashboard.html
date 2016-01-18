@@ -4,7 +4,7 @@
 			<div class="panel-heading">Mes amis</div>
 			<div class="panel-body">
 				<ul ng-repeat="friend in Listefriends">
-					<li  > <a href="" ng-click="FriendView(friend)" data-toggle="modal" data-target="#ViewFriend">{{friend.pseudo}}</a></li>
+					<li  > <a href="" ng-click="FriendView(friend.friend)" data-toggle="modal" data-target="#ViewFriend">{{friend.friend.pseudo}}</a></li>
 				</ul>
 				<datalist  id="amis">
 					<option ng-repeat="friend in Listefriends" value={{friend.pseudo}}>
