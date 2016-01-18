@@ -4,7 +4,7 @@
 			<div class="panel-heading">Mes amis</div>
 			<div class="panel-body">
 				<ul ng-repeat="friend in Listefriends">
-					<li ng-controller="FriendsRemoveController" > <a href="" data-toggle="modal" data-target="#ViewFriend">{{friend.pseudo}}</a></li>
+					<li  > <a href="" ng-click="FriendView(friend)" data-toggle="modal" data-target="#ViewFriend">{{friend.pseudo}}</a></li>
 				</ul>
 				<datalist  id="amis">
 					<option ng-repeat="friend in Listefriends" value={{friend.pseudo}}>
@@ -41,24 +41,24 @@
 								<div class="modal fade" id="ViewFriend" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 									<div class="modal-dialog" role="document">
 										<div class="modal-content">
-											<div class="modal-header">
+											<div class="modal-header"  >
 												<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 												<h4 class="modal-title" id="myModalLabel">Réglage</h4>
 											</div>
 											<div class="modal-body">
-												<form  class="form-signin" name="FormEditFriend" ng-submit="FormAddFriend.$valid && update()">
+												<form  class="form-signin"  name="FormEditFriend" ng-submit="FormEditFriend.$valid && update()">
 													<label for="inputEmail" class="sr-only">Pseudo</label>
-													<input type="text" id="inputPseudo" ng-model="friends.pseudo" class="form-control"  ng-minlength="4" ng-maxlength="15" name="pseudo" placeholder="Pseudo" required autofocus>
+													<input type="text" id="inputPseudo" ng-model="CurrentFriend.pseudo" class="form-control"  ng-minlength="4" ng-maxlength="15" name="pseudo" placeholder="Pseudo" required autofocus>
 													<br>
 
-													<input type="email" id="inputEmail" ng-model="friends.email" class="form-control" ng-hide="true" >
+													<input type="email" id="inputEmail" ng-model="CurrentFriend.email" class="form-control" ng-hide="true" >
 													<span class="error" ng-show="FormEditFriend.pseudo.$error.minlength">
 														Pseudo Too short!<br></span>
 														<span class="error" ng-show="FormEditFriend.pseudo.$error.maxlength">
 															Pseudo Too long!<br></span> 
 															<br>
-															<button class="btn btn-lg btn-primary btn-block" type="submit">Modifier</button>
-															<button class="btn btn-lg btn-primary btn-block" type="button" ng-click=removeFriend(friend.email);>Supprimer</button>
+															<button class="btn btn-lg btn-primary btn-block"  type="submit">Modifier</button>
+															<button class="btn btn-lg btn-primary btn-block" ng-controller="FriendsRemoveController" type="button"  ng-click=removeFriend(CurrentFriend);>Supprimer</button>
 														</form>
 													</div>
 												</div>
@@ -100,22 +100,20 @@
 
 																<div href ng-if="$first || $index==1"  >
 																	<input type="text" list="amis" ng-minlength="4" ng-maxlength="15" name="pseudo_{{$index}}" ng-model="groups.membres[number].pseudo" ng-change="changePseudo(number)" ng-required="true" class="form-control" placeholder="Member pseudo"  required>
+																</div>
 
-
-																	<div href ng-if="!$first && $index !=1 "  >
+																<div href ng-if="!$first && $index !=1 "  >
 																		<input type="text" list="amis" ng-minlength="4" ng-maxlength="15" name="pseudo_{{$index}}"  ng-model="groups.membres[number].pseudo" class="form-control"  placeholder="Member pseudo"  >
-
-
-																	</div>
+																</div>
 																	<span class="error" ng-show="FormAddGroup['pseudo_{{$index}}'].$error.minlength ">
 																		Member pseudo Too short!</span>
-																		<span class="error" ng-show="FormAddGroup['pseudo_{{$index}}'].$error.maxlength">
+																	<span class="error" ng-show="FormAddGroup['pseudo_{{$index}}'].$error.maxlength">
 																			Member pseudo Too long!</span> 
-																			<input type="email" ng-model="groups.membres[number].email" name="email_{{$index}}" class="form-control" 
-																			placeholder="Member mail" >  <button ng-if="!$first && $index !=1 " ng-click="remove(number)" aria-label="Remove">X</button>
-																			<span class="error" ng-show="FormAddGroup['email_{{$index}}'].$error.email">
-																				Enter a valid email address!<br></span>
-																			</div>
+																	<input type="email" ng-model="groups.membres[number].email" name="email_{{$index}}" class="form-control" 
+																			placeholder="Member mail" >
+																	<button ng-if="!$first && $index !=1 " ng-click="remove(number)" aria-label="Remove">X</button>
+																	<span class="error" ng-show="FormAddGroup['email_{{$index}}'].$error.email"> Enter a valid email address!<br></span>
+																	</div>
 
 
 																			<a href ng-click="add()"> Ajouter un autre membre </a><br/>
@@ -132,12 +130,12 @@
 																		</div>
 																	</div>
 																</div>
-																<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addGroup">
+														
+															<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addGroup">
 																	Ajouter un groupe
 																</button>
-															</div>
-														</div>
 													</div>
+												</div>
 												</div>
 
 
@@ -299,4 +297,5 @@
 															</div>
 														</div>
 													</div>
+												</div>
 												</div>
