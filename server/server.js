@@ -130,19 +130,27 @@ MongoClient.connect(url, function(err, db) {
 		var cursor = friends.find({$or : [ { "user.email" : req.session.user.email }, { "friend.email" : req.session.user.email } ]})
 		cursor.toArray(function(err, data) {
 		    if (err) return next(err)
-		    console.log(data)
+		   
 		    var tab = new Array()
 		    var length = Object.keys(data).length; 
 		    for (var i = 0; i <length; i++) 
 		    {
-
+					tab[i] = {};
+					tab[i].id = data[i]._id;
+					tab[i].expenses=new Array();
+ 					tab[i].expenses=data[i].expenses;
+				
 			if(data[i].friend.email == req.session.user.email)
-			    tab[i] = data[i].user;  
-			else tab[i] = data[i].friend;  
+			    tab[i].friend = data[i].user;  
+			else {	
+					
+					tab[i].friend = data[i].friend;  
+					
+ 				}
 
 		    }	
 
-		    
+		     console.log(tab)
 		    res.jsonp(tab)
 		})
 	    })
@@ -230,7 +238,8 @@ friends.update( { $and : [ { "user.email" : req.body.email }, { "friend.email": 
 				    
 				}  
 			    }
-
+			    tab[i].expenses=new Array();
+ 				tab[i].expenses=data[i].expenses;
 			    
 			}
 			
