@@ -163,6 +163,35 @@ MongoClient.connect(url, function(err, db) {
 	    })
 	});
 
+	app.post('/users/friends/update', function(req, res) {
+		console.log(req.body.email);
+			db.collection("friends", function(err, friends) {
+			friends.findOne( { $or : [ 
+						{$and : [ { "user.email" : req.session.user.email }, { "friend.email": req.body.email} ]},
+						{$and : [ { "friend.email" : req.session.user.email }, { "user.email": req.body.email} ]}
+									] 
+					},function(err, friend){
+					if(err) return;
+			console.log(friend);		
+if(friend.user.email == req.session.user.email )
+{
+	console.log("je suis la");
+	friends.update( { $and : [ { "user.email" : req.session.user.email }, { "friend.email": req.body.email} ]},{
+	"friend.pseudo": req.body.pseudo
+	},function(err, friend){console.log("ami modifié") })
+									
+}
+else {
+	console.log("je suis pas la");
+friends.update( { $and : [ { "user.email" : req.body.email }, { "friend.email": req.session.user.email} ]},{
+	"user.pseudo": req.body.pseudo
+	},function(err, friend){console.log("ami modifié");})
+}
+}
+				)
+			})			
+		});
+
     })
 
     db.collection("groups", function(err, groups) {
