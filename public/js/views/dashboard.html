@@ -212,7 +212,7 @@
 																				<div class="col-md-12">
 																					<span>Votre dépense concerne : </span>
 																					<select name="group" ng-model="expense.groupe" ng-change="payers = getPayers()">
-																						<option ng-repeat="group in myGroups" value="{{group.id}}">{{group.nameGroupe}}</option>
+																						<option ng-repeat="group in myGroups" value="{{group._id}}">{{group.nameGroupe}}</option>
 																					</select>
 																				</div>
 																				<br><br>
