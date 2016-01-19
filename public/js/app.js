@@ -155,6 +155,10 @@ app.controller("GroupsController", ['$scope', '$resource', '$rootScope', '$cooki
 
         $scope.groups = new Groups();
 
+         var GroupsUpdate = $resource("http://localhost:3000/users/groups/update");
+
+        $scope.groupsUpdate = new GroupsUpdate();
+
         Groups.query(function(result){
 
             $scope.Listegroups = result;
@@ -171,6 +175,14 @@ app.controller("GroupsController", ['$scope', '$resource', '$rootScope', '$cooki
 
         }
         var addMember= $scope.MemberNumber.length+1;
+
+        $scope.GroupView = function(group) {
+        $scope.groupsUpdate.CurrentGroup=group;
+        $scope.MemberNumberGroupUpdate=[];
+        for(var k=0; k< $scope.groupsUpdate.CurrentGroup.membres.length-1 ; k++)
+                 $scope.MemberNumberGroupUpdate[k]=k+1;
+
+        }
 
         $scope.changePseudo = function(number) {
 
@@ -190,6 +202,22 @@ app.controller("GroupsController", ['$scope', '$resource', '$rootScope', '$cooki
         $scope.add = function() {
             $scope.MemberNumber.push(addMember++);
         }
+
+         $scope.updateGroup = function() {
+    $scope.groupsUpdate.$save(function(result){
+
+        if(result.error == null){
+
+         location.reload(); 
+
+     }else{
+         Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
+     }
+ }).catch(function(req){
+     Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
+ });
+}
+
 
         $scope.send = function() {
 
@@ -279,6 +307,24 @@ app.controller("FriendsRemoveController", ['$scope', '$resource', '$rootScope', 
 
       $scope.removeFriend = function(CurrentFri) {
        FriendsRemove.remove({email : CurrentFri.email},function(result){
+          if(result.error == null){
+           location.reload(); }
+       })
+   }
+
+
+}]);
+
+
+app.controller("GroupsRemoveController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
+   function ($scope, $resource, $rootScope, $cookies, $location, Notification){
+
+      var GroupsRemove = $resource("http://localhost:3000/users/groups/:idG");
+
+      $scope.groupsRemove = new GroupsRemove();
+
+      $scope.removeGroup = function(CurrentGr) {
+       GroupsRemove.remove({idG : CurrentGr._id},function(result){
           if(result.error == null){
            location.reload(); }
        })
