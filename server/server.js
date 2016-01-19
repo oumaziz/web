@@ -300,12 +300,24 @@ MongoClient.connect(url, function(err, db) {
 	});
 
 	app.post('/users/groups/update', function(req, res) {
+
+		 if(req.body.CurrentGroup.nameGroupe.length < 4) return res.json({error:"Nom du groupe trop court"}).end()
+	    var lengthMembres = Object.keys(req.body.CurrentGroup.membres).length;
+	    for (var j = 0; j <lengthMembres; j++) 
+	    {
+		if(req.body.CurrentGroup.membres[j].pseudo.length < 4) return res.json({error:"Pseudo trop court"}).end()
+
+		if((req.body.CurrentGroup.membres[j].email == null) || (req.body.CurrentGroup.membres[j].email.length == 0)) req.body.CurrentGroup.membres[j].email = makeEmail();
+
+	    }
 		
-					 groups.update( {_id: mongo.ObjectID(req.body._id)},
-							 {$set: {"friend.pseudo": req.body.CurrentFriend.pseudo
+
+		
+					 groups.update( {_id: mongo.ObjectID(req.body.CurrentGroup._id)},
+							 {$set: {nameGroupe: req.body.CurrentGroup.nameGroupe, membres:req.body.CurrentGroup.membres
 								}},function(err, friend){
-								    console.log("ami modifié") 
-								    res.send("ami modifié")
+								    console.log("groupe modifié") 
+								    res.send("groupe modifié")
 
 								})
 					 
