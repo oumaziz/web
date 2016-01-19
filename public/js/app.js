@@ -6,10 +6,29 @@ app.config(['$routeProvider', function ($routeProvider) {
     .when('/dashboard', {templateUrl: 'js/views/dashboard.html', controller: 'DashboardController'})
     .when('/dashboard/friends', {templateUrl: 'js/views/friends.html', controller: 'FriendsController'})
     .when('/dashboard/groups', {templateUrl: 'js/views/groups.html', controller: 'GroupsController'})
+    .when('/dashboard/friend/:email', {templateUrl: 'js/views/accountFriend.html', controller: 'FriendAccountController'})
     .when('/', {templateUrl: 'js/views/login.html', controller: 'LoginController'})
     .otherwise({redirectTo: '/'});
 }]);
 
+app.controller("FriendAccountController", ['$scope', '$resource', '$rootScope', '$routeParams', '$cookies', '$location', 'Notification',
+  function ($scope, $resource, $rootScope, $routeParams, $cookies, $location, Notification){
+    
+    $scope.account = function(email) {
+      if($rootScope.currentUser == null) $location.path('/');
+      $location.path('/dashboard/friend/'+email); 
+      for(var j=0; j <$scope.Listefriends.length; j++ ){
+        if(email==$scope.Listefriends[j].email){ 
+          $scope.Expenses=$scope.Listefriends[j].expenses;
+          $scope.FriendPseudo=$scope.Listefriends[j].pseudo;
+          break;
+        }
+      }
+      $rootScope.Expenses=$scope.Expenses;
+      $rootScope.FriendPseudo=$scope.FriendPseudo;
+    }
+
+}]);
 
 app.controller("ExpensesManagerController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
    function ($scope, $resource, $rootScope, $cookies, $location, Notification){

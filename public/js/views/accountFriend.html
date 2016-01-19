@@ -1,0 +1,152 @@
+<div class="row" ng-show="currentUser">
+	<div class="col-md-3">
+		<div class="panel panel-default" ng-controller="FriendsController">
+			<div class="panel-heading">Mes amis</div>
+			<div class="panel-body">
+				<ul ng-repeat="friend in Listefriends">
+					<!-- <li ng-controller="FriendsRemoveController" > <a href="" data-toggle="modal" data-target="#ViewFriend">{{friend.pseudo}}</a></li> -->
+					<li ng-controller="FriendAccountController" > <a href=""  ng-click=account(friend.email)>{{friend.pseudo}}</a></li>
+				</ul>
+ <datalist  id="amis">
+  <option ng-repeat="friend in Listefriends" value={{friend.pseudo}}>
+</datalist>
+		
+				<div class="modal fade" id="addFriend" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								<h4 class="modal-title" id="myModalLabel">Ajouter un ami</h4>
+							</div>
+							<div class="modal-body">
+								<form class="form-signin" ng-submit="envoyer()">
+									<label for="inputEmail" class="sr-only">Email address</label>
+									<input type="text" id="inputPseudo" ng-model="friends.pseudo" class="form-control" placeholder="Pseudo" required autofocus>
+									<br>
+									<input type="email" id="inputEmail" ng-model="friends.email" class="form-control" placeholder="Email address" required >
+									<br>
+									<button class="btn btn-lg btn-primary btn-block" type="submit">Ajouter</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addFriend">
+					Ajouter un ami
+				</button>
+
+			</div>
+		</div>
+		<div class="panel panel-default" ng-controller="GroupsController" >
+			<div class="panel-heading">Mes groupes</div>
+			<div class="panel-body">
+				<ul ng-repeat="group in Listegroups">
+					<li><a href="">{{group.nameGroupe}}</a></li>
+					<ul ng-repeat="member in group.membres">
+					<li ng-if="member.email!=currentUser.email" ng-controller="FriendAccountController"><a href=""  ng-click=account(member.email)>{{member.pseudo}}</a></li>
+					
+					</ul>
+				</ul>
+
+				<div class="modal fade" id="addGroup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								<h4 class="modal-title" id="myModalLabel">Ajouter un groupe</h4>
+							</div>
+							<div class="modal-body">
+								<form class="form-signin" ng-submit="send()">
+									<label for="inputGroupName" class="sr-only">Group name</label>
+									<input type="text" id="inputGroupName" ng-model="groups.nameGroupe" class="form-control" placeholder="Group name" required autofocus>
+									<br>
+									<label for="inputGroupName" class="sr-only">Member</label>
+									<div class="form-signin" ng-repeat="number in MemberNumber" >
+
+			<div href ng-if="$first || $index==1"  >
+			      <input type="text" list="amis" ng-model="groups.membres[number].pseudo" ng-change="changePseudo(number)" class="form-control" placeholder="Member pseudo"  required>
+		
+			</div>
+
+			<div href ng-if="!$first && $index !=1 "  >
+			  <input type="text" list="amis" ng-model="groups.membres[number].pseudo" class="form-control"
+					   placeholder="Member pseudo"  >
+			 
+			</div>
+<input type="email" ng-model="groups.membres[number].email" class="form-control" 
+					   placeholder="Member mail" >
+
+</div>
+       
+
+<a href ng-click="add()"> Ajouter un autre membre </a>
+									<button class="btn btn-lg btn-primary btn-block" type="submit">Ajouter</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addGroup">
+					Ajouter un groupe
+				</button>
+			</div>
+		</div>
+	</div>
+
+
+
+	<div class="col-md-9">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4>Historique avec {{FriendPseudo}}<a class="btn btn-success pull-right btn-adapt" data-toggle="modal" data-target="#addRemboursement">Remboursement</a>
+					<a class="btn btn-warning pull-right btn-adapt" data-toggle="modal" data-target="#addDepense">Dépense</a>
+				</h4>
+
+				<div class="modal fade" id="addRemboursement" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								<h4 class="modal-title" id="myModalLabel">Ajouter un remboursement</h4>
+							</div>
+							<div class="modal-body">
+								Rien pour le moment ..
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal fade" id="addDepense" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								<h4 class="modal-title" id="myModalLabel">Ajouter une dépense</h4>
+							</div>
+							<div class="modal-body">
+								Rien pour le moment ..
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="panel-body">
+				<div class="col-md-6">
+					<div class="thumbnail">
+						<div class="caption" ng-repeat="expense in Expenses" ng-if="expense.payer!=currentUser.email">
+							<h4>Vous lui devez {{expense.owe}} pour "{{expense.description}}"</h4>
+						</div>
+					</div>
+				</div> 	
+				<div class="col-md-6">
+					<div class="thumbnail">
+						<div class="caption" ng-repeat="expense in Expenses" ng-if="expense.payer==currentUser.email">
+							<h4 >Vous doit {{expense.owe}} pour "{{expense.description}}"</h4>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
