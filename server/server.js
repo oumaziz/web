@@ -149,7 +149,7 @@ MongoClient.connect(url, function(err, db) {
 		    for (var i = 0; i <length; i++) 
 		    {
 			tab[i] = {};
-			tab[i].id = data[i]._id;
+			tab[i]._id = data[i]._id;
 			tab[i].expenses=new Array();
  			tab[i].expenses=data[i].expenses;
 			
@@ -228,11 +228,11 @@ MongoClient.connect(url, function(err, db) {
 	app.get('/users/groups', function(req, res) {
 
 	    //groupes non partagé
-	    var cursor = groups.find({"membres.0.email": req.session.user.email})
+	    //var cursor = groups.find({"membres.0.email": req.session.user.email})
 	    //dans le cas du pseudo juste
 	    //			var cursor = groups.find({membres: { $all:[req.session.user.pseudo]}})
 	    //dans le cas des groupes partagé
-	    //			var cursor = groups.find({membres: {$elemMatch: {email:req.session.user.email}}})
+	    var cursor = groups.find({membres: {$elemMatch: {email:req.session.user.email}}})
 	    cursor.toArray(function(err, data) {
 		if (err) return next(err)
 
@@ -242,7 +242,7 @@ MongoClient.connect(url, function(err, db) {
 		{	
 
 		    tab[i]= {}
-		    tab[i].id = data[i]._id;
+		    tab[i]._id = data[i]._id;
 		    tab[i].nameGroupe= data[i].nameGroupe;
 		    tab[i].membres=new Array();
 		    var k=0;
@@ -285,7 +285,33 @@ MongoClient.connect(url, function(err, db) {
 
 	});
 
+	app.delete('/users/groups/:idG', function(req, res) {
+	   
+	    
+		groups.remove( { _id: mongo.ObjectID(req.params.idG)}, function(err, group){
+				    if(err) return;
+				    console.log("group supprimé")
+				    res.send("group supprimé")
+				}
+			      )
 
+
+	    
+	});
+
+	app.post('/users/groups/update', function(req, res) {
+		
+					 groups.update( {_id: mongo.ObjectID(req.body._id)},
+							 {$set: {"friend.pseudo": req.body.CurrentFriend.pseudo
+								}},function(err, friend){
+								    console.log("ami modifié") 
+								    res.send("ami modifié")
+
+								})
+					 
+				  
+	    			
+	});
 	app.post('/users/groups/expenses', function(req, res) {	
 
 	    if(req.body.payer == null) return res.json({"error" : "Veuillez saisir tous les champs."})
