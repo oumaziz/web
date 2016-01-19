@@ -76,12 +76,63 @@
 									<div class="panel-heading">Mes groupes</div>
 									<div class="panel-body">
 										<ul ng-repeat="group in Listegroups">
-											<li>{{group.nameGroupe}}</li>
+											<li> <a href="" ng-click="GroupView(group)" data-toggle="modal" data-target="#ViewGroup">{{group.nameGroupe}}</a></li>
 											<ul ng-repeat="member in group.membres">
 												<li> {{member.pseudo}}</li>
 
 											</ul>
 										</ul>
+
+
+
+										<div class="modal fade" id="ViewGroup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+											<div class="modal-dialog" role="document">
+												<div class="modal-content">
+													<div class="modal-header">
+														<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+														<h4 class="modal-title" id="myModalLabel">Réglage</h4>
+													</div>
+													<div class="modal-body">
+														<form  class="form-signin" name="FormAddGroup" ng-submit="FormAddGroup.$valid && updateGroup()">
+															<label for="inputGroupName" class="sr-only">Group name</label>
+															<input type="text" id="inputGroupName" ng-model="groupsUpdate.CurrentGroup.nameGroupe" name="GroupName" ng-minlength="4" ng-maxlength="25" class="form-control" placeholder="Group name" required autofocus>
+															<br>
+															<label for="inputGroupName" class="sr-only">Member</label>
+															<div class="form-signin" ng-repeat="number in MemberNumberGroupUpdate" >
+
+																<div href ng-if="$first || $index==1"  >
+																	<input type="text" list="amis" ng-minlength="4" ng-maxlength="15" name="pseudo_{{$index}}" ng-model="groupsUpdate.CurrentGroup.membres[number].pseudo" ng-change="changePseudo(number)" ng-required="true" class="form-control" placeholder="Member pseudo"  required>
+																</div>
+
+																<div href ng-if="!$first && $index !=1 "  >
+																		<input type="text" list="amis" ng-minlength="4" ng-maxlength="15" name="pseudo_{{$index}}"  ng-model="groupsUpdate.CurrentGroup.membres[number].pseudo" class="form-control"  placeholder="Member pseudo"  >
+																</div>
+																	<span class="error" ng-show="FormAddGroup['pseudo_{{$index}}'].$error.minlength ">
+																		Member pseudo Too short!</span>
+																	<span class="error" ng-show="FormAddGroup['pseudo_{{$index}}'].$error.maxlength">
+																			Member pseudo Too long!</span> 
+																	<input type="email" ng-model="groupsUpdate.CurrentGroup.membres[number].email" name="email_{{$index}}" class="form-control" 
+																			placeholder="Member mail" >
+																	<button  ng-click="remove(number)" aria-label="Remove">X</button>
+																	<span class="error" ng-show="FormAddGroup['email_{{$index}}'].$error.email"> Enter a valid email address!<br></span>
+																	</div>
+
+
+																			<a href ng-click="add()"> Ajouter un autre membre </a><br/>
+
+																			<span class="error" ng-show="FormAddGroup.GroupName.$error.minlength">
+																				Group name Too short!<br></span>
+																				<span class="error" ng-show="FormAddGroup.GroupName.$error.maxlength">
+																					Group name Too long!<br></span> 
+
+
+																					<button class="btn btn-lg btn-primary btn-block" type="submit">Modifier</button>
+																					<button class="btn btn-lg btn-primary btn-block" ng-controller="GroupsRemoveController" type="button"  ng-click=removeGroup(groupsUpdate.CurrentGroup);>Supprimer</button>
+																				</form>
+																			</div>
+																		</div>
+																	</div>
+																</div>
 
 										<div class="modal fade" id="addGroup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 											<div class="modal-dialog" role="document">
