@@ -159,6 +159,8 @@ app.controller("GroupsController", ['$scope', '$resource', '$rootScope', '$cooki
 
         $scope.groupsUpdate = new GroupsUpdate();
 
+        var nbMember;
+        var nombre;
         Groups.query(function(result){
 
             $scope.Listegroups = result;
@@ -178,13 +180,43 @@ app.controller("GroupsController", ['$scope', '$resource', '$rootScope', '$cooki
 
         $scope.GroupView = function(group) {
         $scope.groupsUpdate.CurrentGroup=group;
+        for(var j=0; j< group.membres.length ; j++){
+            var len = group.membres[j].email.length;
+            if(group.membres[j].email.substring(6,len)=="@exemple.fr")
+        $scope.groupsUpdate.CurrentGroup.membres[j].email=null}
+
         $scope.MemberNumberGroupUpdate=[];
         for(var k=0; k< $scope.groupsUpdate.CurrentGroup.membres.length-1 ; k++)
-                 $scope.MemberNumberGroupUpdate[k]=k+1;
-
+                { $scope.MemberNumberGroupUpdate[k]=k+1;
+             nbMember=k+1;
+              nombre=$scope.groupsUpdate.CurrentGroup.membres.length
+}
+        }
+         
+         $scope.addGroup = function() {
+            nbMember= nbMember+1
+            $scope.MemberNumberGroupUpdate.push(nbMember);
         }
 
+        $scope.removeGroup = function(number) {
+            if(nombre> 3){
+            var index2 = this.MemberNumberGroupUpdate.indexOf(number);
+            this.MemberNumberGroupUpdate.splice(index2, 1);
+            nombre--;
+        }
+        else 
+            Notification.error({message: "Il faut au moins 2 membres", positionY: 'bottom', positionX: 'right'});
+        };
+
         $scope.changePseudo = function(number) {
+
+            for(var j=0; j <$scope.Listefriends.length; j++ ) {
+                if($scope.groups.membres[number].pseudo==$scope.Listefriends[j].pseudo) 
+                    $scope.groups.membres[number].email=$scope.Listefriends[j].email;
+            }
+        }
+
+        $scope.changePseudoUpdateGroup = function(number) {
 
             for(var j=0; j <$scope.Listefriends.length; j++ ) {
                 if($scope.groups.membres[number].pseudo==$scope.Listefriends[j].pseudo) 
