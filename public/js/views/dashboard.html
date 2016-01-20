@@ -114,7 +114,7 @@
 																	<span class="error" ng-show="FormUpdateGroup['pseudo_{{number}}'].$error.maxlength">
 																			Member pseudo Too long!</span> 
 																	<input type="email" ng-hide="true" ng-model="groupsUpdate.CurrentGroup.membres[number].email" class="form-control" placeholder="Member mail" >
-																	<button  ng-click="removeGroup(number)"  aria-label="Remove">X</button>
+																	<button  ng-click="removeGroup(number)" ng-show="boole2"  aria-label="Remove">X</button>
 																	
 																	</div>
 
