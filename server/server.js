@@ -307,8 +307,6 @@ MongoClient.connect(url, function(err, db) {
 	    {
 		if(req.body.CurrentGroup.membres[j].pseudo.length < 4) return res.json({error:"Pseudo trop court"}).end()
 
-		if((req.body.CurrentGroup.membres[j].email == null) || (req.body.CurrentGroup.membres[j].email.length == 0)) req.body.CurrentGroup.membres[j].email = makeEmail();
-
 	    }
 		
 
