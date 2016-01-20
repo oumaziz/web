@@ -1,15 +1,13 @@
-// Les dépendances
-var express = require("express")
-var mongo = require("mongodb")
-var MongoClient = mongo.MongoClient
-
 // On met les variables en global afin quelles puissent
 // etre accessible depuis les modules
-
 global.bodyParser = require('body-parser')
 global.cookieParser = require('cookie-parser')
 global.session = require('express-session')
 global.md5 = require("md5")
+global.mongo = require("mongodb")
+
+var MongoClient = mongo.MongoClient
+var express = require("express")
 
 // Mes modules
 var user = require("./user")
