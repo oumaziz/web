@@ -6,10 +6,29 @@ app.config(['$routeProvider', function ($routeProvider) {
     .when('/dashboard', {templateUrl: 'js/views/dashboard.html', controller: 'DashboardController'})
     .when('/dashboard/friends', {templateUrl: 'js/views/friends.html', controller: 'FriendsController'})
     .when('/dashboard/groups', {templateUrl: 'js/views/groups.html', controller: 'GroupsController'})
+    .when('/dashboard/friend/:email', {templateUrl: 'js/views/accountFriend.html', controller: 'FriendAccountController'})
     .when('/', {templateUrl: 'js/views/login.html', controller: 'LoginController'})
     .otherwise({redirectTo: '/'});
 }]);
 
+app.controller("FriendAccountController", ['$scope', '$resource', '$rootScope', '$routeParams', '$cookies', '$location', 'Notification',
+  function ($scope, $resource, $rootScope, $routeParams, $cookies, $location, Notification){
+    
+    $scope.account = function(email) {
+      if($rootScope.currentUser == null) $location.path('/');
+      $location.path('/dashboard/friend/'+email); 
+      for(var j=0; j <$scope.Listefriends.length; j++ ){
+        if(email==$scope.Listefriends[j].email){ 
+          $scope.Expenses=$scope.Listefriends[j].expenses;
+          $scope.FriendPseudo=$scope.Listefriends[j].pseudo;
+          break;
+        }
+      }
+      $rootScope.Expenses=$scope.Expenses;
+      $rootScope.FriendPseudo=$scope.FriendPseudo;
+    }
+
+}]);
 
 app.controller("ExpensesManagerController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
    function ($scope, $resource, $rootScope, $cookies, $location, Notification){
@@ -149,18 +168,16 @@ app.controller("DashboardController", ['$scope', '$resource', '$rootScope', '$co
 
    }]);
 
-app.controller("GroupsController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
+    app.controller("GroupsController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
     function ($scope, $resource, $rootScope, $cookies, $location, Notification){
         var Groups = $resource("http://localhost:3000/users/groups");
 
         $scope.groups = new Groups();
 
-         var GroupsUpdate = $resource("http://localhost:3000/users/groups/update");
+        var GroupsUpdate = $resource("http://localhost:3000/users/groups/update");
 
         $scope.groupsUpdate = new GroupsUpdate();
 
-        var nbMember;
-        var nombre;
         Groups.query(function(result){
 
             $scope.Listegroups = result;
@@ -179,122 +196,36 @@ app.controller("GroupsController", ['$scope', '$resource', '$rootScope', '$cooki
         var addMember= $scope.MemberNumber.length+1;
 
         $scope.GroupView = function(group) {
-        $scope.groupsUpdate.CurrentGroup=group;
-        for(var j=0; j< group.membres.length ; j++){
-            var len = group.membres[j].email.length;
-            if(group.membres[j].email.substring(6,len)=="@exemple.fr")
-        $scope.groupsUpdate.CurrentGroup.membres[j].email=null}
+            $scope.groupsUpdate.CurrentGroup=group;
+            $scope.MemberNumberGroupUpdate=[];
+            for(var k=0; k< $scope.groupsUpdate.CurrentGroup.membres.length-1 ; k++)
+             $scope.MemberNumberGroupUpdate[k]=k+1;
 
-        $scope.MemberNumberGroupUpdate=[];
-        for(var k=0; k< $scope.groupsUpdate.CurrentGroup.membres.length-1 ; k++)
-                { $scope.MemberNumberGroupUpdate[k]=k+1;
-             nbMember=k+1;
-              nombre=$scope.groupsUpdate.CurrentGroup.membres.length
-}
-        }
-         
-         $scope.addGroup = function() {
-            nbMember= nbMember+1
-            $scope.MemberNumberGroupUpdate.push(nbMember);
-        }
-
-        $scope.removeGroup = function(number) {
-            if(nombre> 3){
-            var index2 = this.MemberNumberGroupUpdate.indexOf(number);
-            this.MemberNumberGroupUpdate.splice(index2, 1);
-            nombre--;
-        }
-        else 
-            Notification.error({message: "Il faut au moins 2 membres", positionY: 'bottom', positionX: 'right'});
-        };
-
-        $scope.changePseudo = function(number) {
-
-            for(var j=0; j <$scope.Listefriends.length; j++ ) {
-                if($scope.groups.membres[number].pseudo==$scope.Listefriends[j].pseudo) 
-                    $scope.groups.membres[number].email=$scope.Listefriends[j].email;
-            }
-        }
-
-        $scope.changePseudoUpdateGroup = function(number) {
-
-            for(var j=0; j <$scope.Listefriends.length; j++ ) {
-                if($scope.groups.membres[number].pseudo==$scope.Listefriends[j].pseudo) 
-                    $scope.groups.membres[number].email=$scope.Listefriends[j].email;
-            }
-        }
-
-        $scope.remove = function(number) {
-            var index = this.MemberNumber.indexOf(number);
-            this.MemberNumber.splice(index, 1);
-        };
-
-
-
-        $scope.add = function() {
-            $scope.MemberNumber.push(addMember++);
-        }
-
-         $scope.updateGroup = function() {
-    $scope.groupsUpdate.$save(function(result){
-
-        if(result.error == null){
-
-         location.reload(); 
-
-     }else{
-         Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
      }
- }).catch(function(req){
-     Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
- });
-}
 
+     $scope.changePseudo = function(number) {
 
-        $scope.send = function() {
-
-            $scope.groups.$save(function(result){
-
-                if(result.error == null){
-
-                    location.reload();
-
-                }else{
-                    Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
-                }
-            }).catch(function(req){
-                Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
-            });
+        for(var j=0; j <$scope.Listefriends.length; j++ ) {
+            if($scope.groups.membres[number].pseudo==$scope.Listefriends[j].pseudo) 
+                $scope.groups.membres[number].email=$scope.Listefriends[j].email;
         }
-
-    }]);
-
-app.controller("FriendsController", ['$scope', '$resource', '$rootScope', '$cookies', '$location', 'Notification',
- function ($scope, $resource, $rootScope, $cookies, $location, Notification){
-
-     var Friends = $resource("http://localhost:3000/users/friends");
-
-     $scope.friends = new Friends();
-
-     var FriendsUpdate = $resource("http://localhost:3000/users/friends/update");
-
-     $scope.friendsUpdate = new FriendsUpdate();
-
-     Friends.query(function(result){
-
-         $rootScope.Listefriends = result;
-         $rootScope.initFromFriends()
-     })
-     $scope.FriendView = function(friend) {
-        $scope.friendsUpdate.CurrentFriend=friend;
-
     }
 
-    $scope.envoyer = function() {
+    $scope.remove = function(number) {
+        var index = this.MemberNumber.indexOf(number);
+        this.MemberNumber.splice(index, 1);
+    };
 
-     $scope.friends.$save(function(result){
 
-         if(result.error == null){
+
+    $scope.add = function() {
+        $scope.MemberNumber.push(addMember++);
+    }
+
+    $scope.updateGroup = function() {
+        $scope.groupsUpdate.$save(function(result){
+
+            if(result.error == null){
 
              location.reload(); 
 
@@ -307,25 +238,21 @@ app.controller("FriendsController", ['$scope', '$resource', '$rootScope', '$cook
  }
 
 
- $scope.update = function() {
-    $scope.friendsUpdate.$save(function(result){
+ $scope.send = function() {
+
+    $scope.groups.$save(function(result){
 
         if(result.error == null){
 
-         location.reload(); 
+            location.reload();
 
-     }else{
-         Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
-     }
- }).catch(function(req){
-     Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
- });
+        }else{
+            Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
+        }
+    }).catch(function(req){
+        Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
+    });
 }
-
-
-
-
-
 
 }]);
 
@@ -478,7 +405,7 @@ app.controller("GroupExpensesController", ['$scope', '$resource', '$rootScope', 
 
     $scope.getPayers = function(){
         for (var i = $rootScope.myGroups.length - 1; i >= 0; i--) {
-            if($rootScope.myGroups[i].id == $scope.expense.groupe)
+            if($rootScope.myGroups[i]._id == $scope.expense.groupe)
                 return $rootScope.myGroups[i].membres
         };
     }
@@ -526,28 +453,32 @@ app.controller("GroupExpensesController", ['$scope', '$resource', '$rootScope', 
 
     $scope.add = function(){
         if($scope.expense.groupe != null){
-            var stop = false 
+            if(($scope.expense.payer != null) && ($scope.expense.payer.length > 0)){
+                var stop = false 
 
-            console.log("Le payeur est  : "+$scope.expense.payer)
+                console.log("Le payeur est  : "+$scope.expense.payer)
 
-            if(($scope.expense.cost - $scope.getTotal()) != 0){
-                Notification.error({message: "Veuillez vérifier les montants des parts.", positionY: 'bottom', positionX: 'right'});
-                stop = true
-            }    
+                if(($scope.expense.cost - $scope.getTotal()) != 0){
+                    Notification.error({message: "Veuillez vérifier les montants des parts.", positionY: 'bottom', positionX: 'right'});
+                    stop = true
+                }    
 
-            if(!stop)
-                $scope.expense.$save(function(result){
-                    if(result.error == null)
-                        Notification.success({message: "Ajout reussi", positionY: 'bottom', positionX: 'right'});
-                    else
-                        Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
-                    
-                    $scope.expense.cut = "parts égales"
-                    $scope.expense.balance = []
+                if(!stop)
+                    $scope.expense.$save(function(result){
+                        if(result.error == null)
+                            Notification.success({message: "Ajout reussi", positionY: 'bottom', positionX: 'right'});
+                        else
+                            Notification.error({message: result.error, positionY: 'bottom', positionX: 'right'});
 
-                }).catch(function(req){
-                    Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
-                });
+                        $scope.expense.cut = "parts égales"
+                        $scope.expense.balance = []
+
+                    }).catch(function(req){
+                        Notification.error({message: "Une erreur s'est produite", positionY: 'bottom', positionX: 'right'});
+                    });
+                }else{
+                    Notification.error({message: "Veuillez définir le payeur", positionY: 'bottom', positionX: 'right'});
+                }
             }else{
                 Notification.error({message: "Veuillez selectionner un groupe", positionY: 'bottom', positionX: 'right'});
             }
