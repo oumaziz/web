@@ -83,7 +83,7 @@
 											<li ng-controller="GroupAccountController"> <a href="" ng-click=accountGroup(group._id)>{{group.nameGroupe}}</a>
 											</li>
 											<ul ng-repeat="member in group.membres">
-												<li ng-if="member.email!=currentUser.email" ng-controller="FriendAccountController"><a href=""  ng-click=account(member._id)>{{member.pseudo}}</a></li>
+												<li ng-if="member.email!=currentUser.email">{{member.pseudo}}</li>
 											</ul>
 										</ul>
 
