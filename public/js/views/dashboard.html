@@ -78,7 +78,7 @@
 								<div class="panel panel-default" ng-controller="GroupsController" >
 									<div class="panel-heading">Mes groupes</div>
 									<div class="panel-body">
-										<ul ng-repeat="group in Listegroups">
+										<ul ng-repeat="group in myGroups">
 											<li> <a href="" ng-click="GroupView(group)" data-toggle="modal" data-target="#ViewGroup">{{group.nameGroupe}}</a></li>
 											<ul ng-repeat="member in group.membres">
 												<li ng-if="member.email!=currentUser.email" ng-controller="FriendAccountController"><a href=""  ng-click=account(member.email)>{{member.pseudo}}</a></li>
@@ -107,264 +107,287 @@
 																</div>
 
 																<div href ng-if="!$first && $index !=1 "  >
-																		<input type="text" list="amis" ng-minlength="4" ng-maxlength="15" name="pseudo_{{number}}"  ng-model="groupsUpdate.CurrentGroup.membres[number].pseudo" ng-change="changePseudoUpdateGroup(number)" class="form-control"  placeholder="Member pseudo"  >
+																	<input type="text" list="amis" ng-minlength="4" ng-maxlength="15" name="pseudo_{{number}}"  ng-model="groupsUpdate.CurrentGroup.membres[number].pseudo" ng-change="changePseudoUpdateGroup(number)" class="form-control"  placeholder="Member pseudo"  >
 																</div>
-																	<span class="error" ng-show="FormUpdateGroup['pseudo_{{number}}'].$error.minlength ">
-																		Member pseudo Too short!</span>
+																<span class="error" ng-show="FormUpdateGroup['pseudo_{{number}}'].$error.minlength ">
+																	Member pseudo Too short!</span>
 																	<span class="error" ng-show="FormUpdateGroup['pseudo_{{number}}'].$error.maxlength">
-																			Member pseudo Too long!</span> 
-																	<input type="email" ng-hide="true" ng-model="groupsUpdate.CurrentGroup.membres[number].email" class="form-control" placeholder="Member mail" >
-																	<button  ng-click="removeGroup(number)" ng-show="boole2"  aria-label="Remove">X</button>
-																	
+																		Member pseudo Too long!</span> 
+																		<input type="email" ng-hide="true" ng-model="groupsUpdate.CurrentGroup.membres[number].email" class="form-control" placeholder="Member mail" >
+																		<button  ng-click="removeGroup(number)" ng-show="boole2"  aria-label="Remove">X</button>
+
 																	</div>
 
 
-																			<a href ng-click="addGroup()"> Ajouter un autre membre </a><br/>
+																	<a href ng-click="addGroup()"> Ajouter un autre membre </a><br/>
 
-																			<span class="error" ng-show="FormUpdateGroup.GroupName.$error.minlength">
-																				Group name Too short!<br></span>
-																				<span class="error" ng-show="FormUpdateGroup.GroupName.$error.maxlength">
-																					Group name Too long!<br></span> 
+																	<span class="error" ng-show="FormUpdateGroup.GroupName.$error.minlength">
+																		Group name Too short!<br></span>
+																		<span class="error" ng-show="FormUpdateGroup.GroupName.$error.maxlength">
+																			Group name Too long!<br></span> 
 
 
-																					<button class="btn btn-lg btn-primary btn-block" type="submit">Modifier</button>
-																					<button class="btn btn-lg btn-primary btn-block" ng-controller="GroupsRemoveController" type="button"  ng-click=removeGroup(groupsUpdate.CurrentGroup);>Supprimer</button>
-																				</form>
+																			<button class="btn btn-lg btn-primary btn-block" type="submit">Modifier</button>
+																			<button class="btn btn-lg btn-primary btn-block" ng-controller="GroupsRemoveController" type="button"  ng-click=removeGroup(groupsUpdate.CurrentGroup);>Supprimer</button>
+																		</form>
+																	</div>
+																</div>
+															</div>
+														</div>
+
+														<div class="modal fade" id="addGroup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+															<div class="modal-dialog" role="document">
+																<div class="modal-content">
+																	<div class="modal-header">
+																		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+																		<h4 class="modal-title" id="myModalLabel">Ajouter un groupe</h4>
+																	</div>
+																	<div class="modal-body">
+																		<form  class="form-signin" name="FormAddGroup" ng-submit="FormAddGroup.$valid && send()">
+																			<label for="inputGroupName" class="sr-only">Group name</label>
+																			<input type="text" id="inputGroupName" ng-model="groups.nameGroupe" name="GroupName" ng-minlength="4" ng-maxlength="25" class="form-control" placeholder="Group name" required autofocus>
+																			<br>
+																			<label for="inputGroupName" class="sr-only">Member</label>
+																			<div class="form-signin" ng-repeat="number in MemberNumber" >
+
+																				<div href ng-if="$first || $index==1"  >
+																					<input type="text" list="amis" ng-minlength="4" ng-maxlength="15" name="pseudo_{{number}}" ng-model="groups.membres[number].pseudo" ng-change="changePseudo(number)" ng-required="true" class="form-control" placeholder="Member pseudo"  required>
+																				</div>
+
+																				<div href ng-if="!$first && $index !=1 "  >
+																					<input type="text" list="amis" ng-minlength="4" ng-maxlength="15" name="pseudo_{{number}}"  ng-model="groups.membres[number].pseudo" class="form-control"  placeholder="Member pseudo"  >
+																				</div>
+
+																				<span class="error" ng-show="FormAddGroup['pseudo_{{number}}'].$error.minlength ">
+																					Member pseudo Too short!</span>
+																					<span class="error" ng-show="FormAddGroup['pseudo_{{$number}}'].$error.maxlength">
+																						Member pseudo Too long!</span> 
+																						<input type="email" ng-model="groups.membres[number].email" name="email_{{$number}}" class="form-control" 
+																						placeholder="Member mail" >
+																						<button ng-if="number > 2 " ng-click="remove(number)" aria-label="Remove">X</button>
+																						<span class="error" ng-show="FormAddGroup['email_{{number}}'].$error.email"> Enter a valid email address!<br></span>
+																					</div>
+
+
+																					<a href ng-click="add()"> Ajouter un autre membre </a><br/>
+
+																					<span class="error" ng-show="FormAddGroup.GroupName.$error.minlength">
+																						Group name Too short!<br></span>
+																						<span class="error" ng-show="FormAddGroup.GroupName.$error.maxlength">
+																							Group name Too long!<br></span> 
+
+
+																							<button class="btn btn-lg btn-primary btn-block" type="submit">Ajouter</button>
+																						</form>
+																					</div>
+																				</div>
 																			</div>
 																		</div>
+
+																		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addGroup">
+																			Ajouter un groupe
+																		</button>
 																	</div>
 																</div>
-
-										<div class="modal fade" id="addGroup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-											<div class="modal-dialog" role="document">
-												<div class="modal-content">
-													<div class="modal-header">
-														<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-														<h4 class="modal-title" id="myModalLabel">Ajouter un groupe</h4>
-													</div>
-													<div class="modal-body">
-														<form  class="form-signin" name="FormAddGroup" ng-submit="FormAddGroup.$valid && send()">
-															<label for="inputGroupName" class="sr-only">Group name</label>
-															<input type="text" id="inputGroupName" ng-model="groups.nameGroupe" name="GroupName" ng-minlength="4" ng-maxlength="25" class="form-control" placeholder="Group name" required autofocus>
-															<br>
-															<label for="inputGroupName" class="sr-only">Member</label>
-															<div class="form-signin" ng-repeat="number in MemberNumber" >
-
-																<div href ng-if="$first || $index==1"  >
-																	<input type="text" list="amis" ng-minlength="4" ng-maxlength="15" name="pseudo_{{number}}" ng-model="groups.membres[number].pseudo" ng-change="changePseudo(number)" ng-required="true" class="form-control" placeholder="Member pseudo"  required>
-																</div>
-
-																<div href ng-if="!$first && $index !=1 "  >
-																		<input type="text" list="amis" ng-minlength="4" ng-maxlength="15" name="pseudo_{{number}}"  ng-model="groups.membres[number].pseudo" class="form-control"  placeholder="Member pseudo"  >
-																</div>
-
-																	<span class="error" ng-show="FormAddGroup['pseudo_{{number}}'].$error.minlength ">
-																		Member pseudo Too short!</span>
-																	<span class="error" ng-show="FormAddGroup['pseudo_{{$number}}'].$error.maxlength">
-																			Member pseudo Too long!</span> 
-																	<input type="email" ng-model="groups.membres[number].email" name="email_{{$number}}" class="form-control" 
-																			placeholder="Member mail" >
-																	<button ng-if="number > 2 " ng-click="remove(number)" aria-label="Remove">X</button>
-																	<span class="error" ng-show="FormAddGroup['email_{{number}}'].$error.email"> Enter a valid email address!<br></span>
 															</div>
 
 
-																			<a href ng-click="add()"> Ajouter un autre membre </a><br/>
-
-																			<span class="error" ng-show="FormAddGroup.GroupName.$error.minlength">
-																				Group name Too short!<br></span>
-																				<span class="error" ng-show="FormAddGroup.GroupName.$error.maxlength">
-																					Group name Too long!<br></span> 
 
 
-																					<button class="btn btn-lg btn-primary btn-block" type="submit">Ajouter</button>
-																				</form>
+															<div class="col-md-9">
+																<div class="panel panel-default">
+																	<div class="panel-heading">
+																		<h4>Tableau de bord
+																			<a class="btn btn-warning pull-right btn-adapt" data-toggle="modal" data-target="#addGroupDepense">Ajouter dépense (Groupe)</a>
+																			<a class="btn btn-success pull-right btn-adapt" data-toggle="modal" data-target="#addFriendDepense">Ajouter dépense (Ami)</a>
+																		</h4>
+
+																		<div class="modal fade" id="addGroupDepense" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-controller="GroupExpensesController">
+																			<div class="modal-dialog" role="document">
+																				<div class="modal-content">
+																					<div class="modal-header">
+																						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+																						<h4 class="modal-title" id="myModalLabel">Ajouter une dépense</h4>
+																					</div>
+																					<div class="modal-body">
+																						<form class="container-fluid" ng-submit="envoyer()">
+																							<div class="col-md-12">
+																								<span>Votre dépense concerne : </span>
+																								<select name="group" ng-model="expense.groupe" ng-change="payers = getPayers()">
+																									<option ng-repeat="group in myGroups" value="{{group._id}}">{{group.nameGroupe}}</option>
+																								</select>
+																							</div>
+																							<br><br>
+
+																							<div class="col-md-12">
+																								<div class="input-group">
+																									<input type="number" step="any" ng-model="expense.cost" class="form-control" placeholder="Montant"  ng-change="expense.balance = getBalance()" required>
+																									<span class="input-group-addon">€</span>
+																								</div>
+																								<br>
+																							</div>
+
+																							<div class="col-md-12">
+																								<input type="date" id="expensedate" name="expensedate" ng-model="expense.date" placeholder="Date"  class="form-control" required>
+																								<br>
+																							</div>
+
+																							<div class="col-md-12">
+																								<label for="inputDescription" class="sr-only">Description</label>
+																								<textarea id="inputDescription" ng-model="expense.description" class="form-control" placeholder="Description" required autofocus></textarea>
+																								<br>
+																							</div>
+
+																							<div class="col-md-12">
+																								<p>Payé par <select name="payer" ng-model="expense.payer" >
+																									<option ng-repeat="payer in payers" value="{{payer.email}}">{{payer.pseudo}}</option>
+																								</select> Et partagé à <a href="" ng-click="changeCut()">{{expense.cut}}</a></p>
+																								<br>
+																							</div>
+
+																							<div class="col-md-12" ng-show="detail">
+																								<div ng-repeat="user in expense.balance">
+																									<label for="inputPseudo">{{ user.user.pseudo }}</label>
+																									<div class="input-group">
+																										<input type="number" step="any" id="inputPseudo" ng-model="user.owe" class="form-control" 
+																										placeholder="{{ user.user.pseudo }}" autofocus>
+																										<span class="input-group-addon">€</span>
+																									</div>
+																									<br>
+																								</div>
+
+																								<br>
+																								<p><b>TOTAL : {{ getTotal() | currency : "€"}}</b> <span class="pull-right">{{ expense.cost - getTotal() | currency : "€" }} restants</span></p>
+																								<br>
+																							</div>
+
+																							<button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="add()">Ajouter</button>
+																						</form>
+																					</div>
+																				</div>
+																			</div>
+																		</div>
+
+																		<div class="modal fade" id="addFriendDepense" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-controller="FriendExpensesController">
+																			<div class="modal-dialog" role="document">
+																				<div class="modal-content">
+																					<div class="modal-header">
+																						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+																						<h4 class="modal-title" id="myModalLabel">Ajouter une dépense</h4>
+																					</div>
+																					<div class="modal-body">
+																						<form class="container-fluid" ng-submit="envoyer()">
+																							<div class="col-md-12">
+																								<span>Votre dépense concerne : </span>
+																								<select name="friend" ng-model="expense.friend">
+																									<option ng-repeat="friend in Listefriends" value="{{friend.email}}">{{friend.pseudo}}</option>
+																								</select>
+																							</div>
+																							<br><br>
+
+																							<div class="col-md-12">
+																								<div class="input-group">
+																									<input type="number" step="any" ng-model="expense.cost" class="form-control" placeholder="Montant" required>
+																									<span class="input-group-addon">€</span>
+																								</div>
+																								<br>
+																							</div>
+
+																							<div class="col-md-12">
+																								<input type="date" id="expensedate" name="expensedate" ng-model="expense.date" placeholder="Date"  class="form-control" required>
+																								<br>
+																							</div>
+
+																							<div class="col-md-12">
+																								<label for="inputDescription" class="sr-only">Description</label>
+																								<textarea id="inputDescription" ng-model="expense.description" class="form-control" placeholder="Description" required autofocus></textarea>
+																								<br>
+																							</div>
+
+																							<div class="col-md-12">
+																								<p>Payé par <a href="" ng-click="changePayer()">{{expense.payerText}}</a> Et partagé à <a href="" ng-click="changeCut()">{{expense.cut}}</a></p>
+																								<br>
+																							</div>
+
+																							<div class="col-md-12" ng-show="detail">
+																								<div class="input-group">
+																									<label for="inputYou" class="sr-only">Part du payeur</label>
+																									<input type="number" step="any" id="inputPseudo" ng-model="expense.you" class="form-control" placeholder="Part du payeur" autofocus>
+																									<span class="input-group-addon">€</span>
+																								</div>
+																								<br>
+																								<div class="input-group">
+																									<label for="inputYou" class="sr-only">Part de l'ami</label>
+																									<input type="number" step="any" id="inputPseudo" ng-model="expense.owe" class="form-control" placeholder="Part de l'ami" autofocus>
+																									<span class="input-group-addon">€</span>
+																								</div>
+																								<br>
+																								<p><b>TOTAL : {{ expense.you + expense.owe | currency : "€"}}</b> <span class="pull-right">{{ expense.cost - (expense.you + expense.owe) | currency : "€" }} restants</span></p>
+																								<br>
+																							</div>
+
+																							<button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="add()">Ajouter</button>
+																						</form>
+																					</div>
+																				</div>
 																			</div>
 																		</div>
 																	</div>
-																</div>
-														
-															<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addGroup">
-																	Ajouter un groupe
-																</button>
-													</div>
-												</div>
-												</div>
 
-
-
-
-												<div class="col-md-9">
-													<div class="panel panel-default">
-														<div class="panel-heading">
-															<h4>Tableau de bord
-																<a class="btn btn-warning pull-right btn-adapt" data-toggle="modal" data-target="#addGroupDepense">Ajouter dépense (Groupe)</a>
-																<a class="btn btn-success pull-right btn-adapt" data-toggle="modal" data-target="#addFriendDepense">Ajouter dépense (Ami)</a>
-															</h4>
-
-															<div class="modal fade" id="addGroupDepense" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-controller="GroupExpensesController">
-																<div class="modal-dialog" role="document">
-																	<div class="modal-content">
-																		<div class="modal-header">
-																			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-																			<h4 class="modal-title" id="myModalLabel">Ajouter une dépense</h4>
-																		</div>
-																		<div class="modal-body">
-																			<form class="container-fluid" ng-submit="envoyer()">
-																				<div class="col-md-12">
-																					<span>Votre dépense concerne : </span>
-																					<select name="group" ng-model="expense.groupe" ng-change="payers = getPayers()">
-																						<option ng-repeat="group in myGroups" value="{{group._id}}">{{group.nameGroupe}}</option>
-																					</select>
-																				</div>
-																				<br><br>
-
-																				<div class="col-md-12">
-																					<div class="input-group">
-																						<input type="number" step="any" ng-model="expense.cost" class="form-control" placeholder="Montant"  ng-change="expense.balance = getBalance()" required>
-																						<span class="input-group-addon">€</span>
-																					</div>
-																					<br>
-																				</div>
-
-																				<div class="col-md-12">
-																					<input type="date" id="expensedate" name="expensedate" ng-model="expense.date" placeholder="Date"  class="form-control" required>
-																					<br>
-																				</div>
-
-																				<div class="col-md-12">
-																					<label for="inputDescription" class="sr-only">Description</label>
-																					<textarea id="inputDescription" ng-model="expense.description" class="form-control" placeholder="Description" required autofocus></textarea>
-																					<br>
-																				</div>
-
-																				<div class="col-md-12">
-																					<p>Payé par <select name="payer" ng-model="expense.payer" >
-																						<option ng-repeat="payer in payers" value="{{payer.email}}">{{payer.pseudo}}</option>
-																					</select> Et partagé à <a href="" ng-click="changeCut()">{{expense.cut}}</a></p>
-																					<br>
-																				</div>
-
-																				<div class="col-md-12" ng-show="detail">
-																					<div ng-repeat="user in expense.balance">
-																						<label for="inputPseudo">{{ user.user.pseudo }}</label>
-																						<div class="input-group">
-																							<input type="number" step="any" id="inputPseudo" ng-model="user.owe" class="form-control" 
-																							placeholder="{{ user.user.pseudo }}" autofocus>
-																							<span class="input-group-addon">€</span>
+																	<div ng-controller="ExpensesManagerController">
+																		<div class="panel-body">
+																			<div class="col-md-12">
+																				<div class="thumbnail">
+																					<div class="caption row">
+																						<div class="col-md-4">
+																							<h4 class="text-center">Total</h4>
+																							<p class="text-center">{{ getOweTotal() - getOwedTotal() | currency : "€"}}</p>
 																						</div>
-																						<br>
+																						<div class="col-md-4">
+																							<h4 class="text-center">Vous devez</h4>
+																							<p class="text-center text-danger">{{ getOwedTotal() | currency : "€"}}</p>
+																						</div>
+																						<div class="col-md-4">
+																							<h4 class="text-center">On vous doit</h4>
+																							<p class="text-center text-primary">{{ getOweTotal() | currency : "€"}}</p>
+																						</div>
 																					</div>
-
-																					<br>
-																					<p><b>TOTAL : {{ getTotal() | currency : "€"}}</b> <span class="pull-right">{{ expense.cost - getTotal() | currency : "€" }} restants</span></p>
-																					<br>
 																				</div>
-
-																				<button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="add()">Ajouter</button>
-																			</form>
-																		</div>
-																	</div>
-																</div>
-															</div>
-
-															<div class="modal fade" id="addFriendDepense" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-controller="FriendExpensesController">
-																<div class="modal-dialog" role="document">
-																	<div class="modal-content">
-																		<div class="modal-header">
-																			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-																			<h4 class="modal-title" id="myModalLabel">Ajouter une dépense</h4>
-																		</div>
-																		<div class="modal-body">
-																			<form class="container-fluid" ng-submit="envoyer()">
-																				<div class="col-md-12">
-																					<span>Votre dépense concerne : </span>
-																					<select name="friend" ng-model="expense.friend">
-																						<option ng-repeat="friend in Listefriends" value="{{friend.email}}">{{friend.pseudo}}</option>
-																					</select>
-																				</div>
-																				<br><br>
-
-																				<div class="col-md-12">
-																					<div class="input-group">
-																						<input type="number" step="any" ng-model="expense.cost" class="form-control" placeholder="Montant" required>
-																						<span class="input-group-addon">€</span>
-																					</div>
-																					<br>
-																				</div>
-
-																				<div class="col-md-12">
-																					<input type="date" id="expensedate" name="expensedate" ng-model="expense.date" placeholder="Date"  class="form-control" required>
-																					<br>
-																				</div>
-
-																				<div class="col-md-12">
-																					<label for="inputDescription" class="sr-only">Description</label>
-																					<textarea id="inputDescription" ng-model="expense.description" class="form-control" placeholder="Description" required autofocus></textarea>
-																					<br>
-																				</div>
-
-																				<div class="col-md-12">
-																					<p>Payé par <a href="" ng-click="changePayer()">{{expense.payerText}}</a> Et partagé à <a href="" ng-click="changeCut()">{{expense.cut}}</a></p>
-																					<br>
-																				</div>
-
-																				<div class="col-md-12" ng-show="detail">
-																					<div class="input-group">
-																						<label for="inputYou" class="sr-only">Part du payeur</label>
-																						<input type="number" step="any" id="inputPseudo" ng-model="expense.you" class="form-control" placeholder="Part du payeur" autofocus>
-																						<span class="input-group-addon">€</span>
-																					</div>
-																					<br>
-																					<div class="input-group">
-																						<label for="inputYou" class="sr-only">Part de l'ami</label>
-																						<input type="number" step="any" id="inputPseudo" ng-model="expense.owe" class="form-control" placeholder="Part de l'ami" autofocus>
-																						<span class="input-group-addon">€</span>
-																					</div>
-																					<br>
-																					<p><b>TOTAL : {{ expense.you + expense.owe | currency : "€"}}</b> <span class="pull-right">{{ expense.cost - (expense.you + expense.owe) | currency : "€" }} restants</span></p>
-																					<br>
-																				</div>
-
-																				<button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="add()">Ajouter</button>
-																			</form>
-																		</div>
-																	</div>
-																</div>
-															</div>
-														</div>
-														<div class="panel-body" ng-controller="ExpensesManagerController">
-															<div class="col-md-6">
-																<div class="thumbnail">
-																	<div class="caption">
-																		<h4 class="text-center">Vous devez</h4><br>
-																		<div ng-repeat="friend in owed">
-																			<div ng-if="friend.expenses.length > 0">
-																				<p>Vous devez à <b>{{friend.user}}</b> <span class="text-danger">{{ getSum(friend.expenses) | currency : "€"}}</span></p>
-																				<ul ng-repeat="expense in friend.expenses">
-																					<li>Vous lui devez {{expense.amount | currency : "€"}} pour "{{expense.description}}"</li>
-																				</ul>
 																			</div>
-																		</div>	
-																	</div>
-																</div>
-															</div> 	
-															<div class="col-md-6">
-																<div class="thumbnail">
-																	<div class="caption">
-																		<h4 class="text-center">On vous doit</h4><br>
-																		<div ng-repeat="friend in owe">
-																			<div ng-if="friend.expenses.length > 0">
-																				<p><b>{{friend.user}}</b> vous doit <span class="text-primary">{{ getSum(friend.expenses) | currency : "€"}}</span></p>
-																				<ul ng-repeat="expense in friend.expenses">
-																					<li>Vous doit {{expense.amount | currency : "€"}} pour "{{expense.description}}"</li>
-																				</ul>
+																		</div>
+																		<div class="panel-body" style="margin-top: -20px;">
+																			<div class="col-md-6">
+																				<div class="thumbnail">
+																					<div class="caption">
+																						<h4 class="text-center">Vous devez</h4><br>
+																						<div ng-repeat="friend in owed">
+																							<div ng-if="friend.expenses.length > 0">
+																								<p>Vous devez à <b>{{friend.user}}</b> <span class="text-danger">{{ getSum(friend.expenses) | currency : "€"}}</span></p>
+																								<ul ng-repeat="expense in friend.expenses">
+																									<li>Vous lui devez {{expense.amount | currency : "€"}} pour "{{expense.description}}"</li>
+																								</ul>
+																							</div>
+																						</div>	
+																					</div>
+																				</div>
+																			</div> 	
+																			<div class="col-md-6">
+																				<div class="thumbnail">
+																					<div class="caption">
+																						<h4 class="text-center">On vous doit</h4><br>
+																						<div ng-repeat="friend in owe">
+																							<div ng-if="friend.expenses.length > 0">
+																								<p><b>{{friend.user}}</b> vous doit <span class="text-primary">{{ getSum(friend.expenses) | currency : "€"}}</span></p>
+																								<ul ng-repeat="expense in friend.expenses">
+																									<li>Vous doit {{expense.amount | currency : "€"}} pour "{{expense.description}}"</li>
+																								</ul>
+																							</div>
+																						</div>
+																					</div>
+																				</div>
 																			</div>
 																		</div>
 																	</div>
 																</div>
 															</div>
 														</div>
-													</div>
-												</div>
-												</div>
