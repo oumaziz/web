@@ -141,7 +141,8 @@
 				<div class="panel-body">
 					<div class="col-md-6">
 						<div class="thumbnail">
-							<h4 class="text-center">Vous devez</h4><br>
+							<h4  ng-if="GroupExpenses.length==0" class="text-center">Vous ne devez rien</h4>
+							<h4  ng-if="GroupExpenses.length>0" class="text-center">Vous devez</h4><br>
 							<div class="caption" ng-repeat="expense in GroupExpenses" g-if="expense.payer!=currentUser.email">
 								<div>
 									<p>Pour "{{expense.description}}" :</p>
@@ -154,7 +155,8 @@
 					</div> 	
 					<div class="col-md-6">
 						<div class="thumbnail">
-							<h4 class="text-center">On vous doit</h4><br>
+							<h4  ng-if="GroupExpenses.length==0" class="text-center">On ne vous doit rien</h4>
+							<h4 ng-if="GroupExpenses.length>0" class="text-center">On vous doit</h4><br>
 							<div class="caption" ng-repeat="expense in GroupExpenses" ng-if="expense.payer==currentUser.email">
 								<div>
 									<p>Pour "{{expense.description}}" :</p>
