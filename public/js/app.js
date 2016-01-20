@@ -206,6 +206,8 @@ app.controller("DashboardController", ['$scope', '$resource', '$rootScope', '$co
               $scope.MemberNumberGroupUpdate[k]=k+1;
               nbMember=k+1;
               nombre=$scope.groupsUpdate.CurrentGroup.membres.length
+              if(nombre>3) $scope.varShow=true; else
+                 $scope.varShow=false;
                 }
             }
             else {  $scope.boole=false;
@@ -222,9 +224,11 @@ app.controller("DashboardController", ['$scope', '$resource', '$rootScope', '$co
             var index2 = this.MemberNumberGroupUpdate.indexOf(number);
             this.MemberNumberGroupUpdate.splice(index2, 1);
             nombre--;
+            if(nombre>3) $scope.varShow=true; else
+            $scope.varShow=false;
         }
-        else 
-            Notification.error({message: "Il faut au moins 2 membres", positionY: 'bottom', positionX: 'right'});
+        
+            
         };
 
         $scope.changePseudo = function(number) {
