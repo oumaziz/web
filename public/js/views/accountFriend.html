@@ -41,7 +41,7 @@
 								<div class="modal-body">
 									<form  class="form-signin"  name="FormEditFriend" ng-submit="FormEditFriend.$valid && update()">
 										<label for="inputEmail" class="sr-only">Pseudo</label>
-										<input type="text" id="inputPseudo" ng-model="FriendAccount.pseudo" class="form-control"  ng-minlength="4" ng-maxlength="15" name="pseudo" placeholder="Pseudo" required autofocus>
+										<input type="text" id="inputPseudo" ng-model="FriendAccount.pseudo" ng-change="changePseudo(FriendAccount)" class="form-control"  ng-minlength="4" ng-maxlength="15" name="pseudo" placeholder="Pseudo" required autofocus>
 										<br>
 
 										<input type="email" id="inputEmail" ng-model="FriendAccount.email" class="form-control" ng-hide="true" >
