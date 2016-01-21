@@ -23,7 +23,7 @@
 								<div class="modal-body">
 									<form  class="form-signin" name="FormAddFriend" ng-submit="FormAddFriend.$valid && envoyer()">
 										<label for="inputEmail" class="sr-only">Pseudo</label>
-										<input type="text" id="inputPseudo" ng-model="friends.pseudo" class="form-control"  ng-minlength="4" ng-maxlength="15" name="pseudo" placeholder="Pseudo" required autofocus>
+										<input type="text" id="inputPseudo" ng-model="friends.pseudo" class="form-control"  ng-minlength="4" ng-maxlength="15" name="pseudo" ng-change="changePseudo(friends)" placeholder="Pseudo" required autofocus>
 										<br>
 										<label for="inputEmail" class="sr-only">Email address</label>
 										<input type="email" id="inputEmail" ng-model="friends.email" class="form-control" name="email" placeholder="Email address" required >
@@ -41,32 +41,7 @@
 									</div>
 								</div>
 
-								<div class="modal fade" id="ViewFriend" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-									<div class="modal-dialog" role="document">
-										<div class="modal-content">
-											<div class="modal-header"  >
-												<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-												<h4 class="modal-title" id="myModalLabel">Réglage</h4>
-											</div>
-											<div class="modal-body">
-												<form  class="form-signin"  name="FormEditFriend" ng-submit="FormEditFriend.$valid && update()">
-													<label for="inputEmail" class="sr-only">Pseudo</label>
-													<input type="text" id="inputPseudo" ng-model="friendsUpdate.CurrentFriend.pseudo" class="form-control"  ng-minlength="4" ng-maxlength="15" name="pseudo" placeholder="Pseudo" required autofocus>
-													<br>
-
-													<input type="email" id="inputEmail" ng-model="friendsUpdate.CurrentFriend.email" class="form-control" ng-hide="true" >
-													<span class="error" ng-show="FormEditFriend.pseudo.$error.minlength">
-														Pseudo Too short!<br></span>
-														<span class="error" ng-show="FormEditFriend.pseudo.$error.maxlength">
-															Pseudo Too long!<br></span> 
-															<br>
-															<button class="btn btn-lg btn-primary btn-block"  type="submit">Modifier</button>
-															<button class="btn btn-lg btn-primary btn-block" ng-controller="FriendsRemoveController" type="button"  ng-click=removeFriend(friendsUpdate.CurrentFriend);>Supprimer</button>
-														</form>
-													</div>
-												</div>
-											</div>
-										</div>
+		
 
 										<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addFriend">
 											Ajouter un ami
@@ -86,50 +61,6 @@
 												<li ng-if="member.email!=currentUser.email">{{member.pseudo}}</li>
 											</ul>
 										</ul>
-
-
-										<div class="modal fade" id="ViewGroup" ng-show="boole" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-											<div class="modal-dialog" role="document">
-												<div class="modal-content">
-													<div class="modal-header">
-														<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-														<h4 class="modal-title" id="myModalLabel">Réglage</h4>
-													</div>
-													<div class="modal-body">
-														<form  class="form-signin" name="FormUpdateGroup" ng-submit="FormUpdateGroup.$valid && updateGroup()">
-															<label for="inputGroupName" class="sr-only">Group name</label>
-															<input type="text" id="inputGroupName" ng-model="groupsUpdate.CurrentGroup.nameGroupe" name="GroupName" ng-minlength="4" ng-maxlength="25" class="form-control" placeholder="Group name" required autofocus>
-															<br>
-															<label for="inputGroupName" class="sr-only">Member</label>
-															<div class="form-signin" ng-repeat="member in groupsUpdate.CurrentGroup.membres" >
-
-																<div href ng-if="!$first "  >
-																	<input type="text" list="amis" ng-minlength="4" ng-maxlength="15" ng-model="member.pseudo"  ng-change="changePseudoUpdateGroup(member)" ng-required="true" class="form-control" placeholder="Member pseudo"  required>
-																</div>
-
-																
-																	
-																	<input  ng-hide="true" type="email"  ng-model="member.email" class="form-control" placeholder="Member mail" >
-																	<button  ng-click="removeGroup(member)" ng-show="varShow"   ng-if="!$first "aria-label="Remove">X</button>
-																	
-																	</div>
-
-
-																			<a href ng-click="addGroup()"> Ajouter un autre membre </a><br/>
-
-																			<span class="error" ng-show="FormUpdateGroup.GroupName.$error.minlength">
-																				Group name Too short!<br></span>
-																				<span class="error" ng-show="FormUpdateGroup.GroupName.$error.maxlength">
-																					Group name Too long!<br></span> 
-
-
-																					<button class="btn btn-lg btn-primary btn-block" type="submit">Modifier</button>
-																					<button class="btn btn-lg btn-primary btn-block" ng-controller="GroupsRemoveController" type="button"  ng-click=removeGroup(groupsUpdate.CurrentGroup);>Supprimer</button>
-																				</form>
-																			</div>
-																		</div>
-																	</div>
-																</div>
 
 											<div class="modal fade" id="addGroup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 											<div class="modal-dialog" role="document">
