@@ -11,6 +11,7 @@ angular.module("expensesApp").controller("GroupsRemoveController", ['$scope', '$
 				if(result.error == null){
 					$('#ViewGroup').modal('hide')
         			$rootScope.refreshGroups()
+        			$location.path('#/')
 				}
 			})
 		}}

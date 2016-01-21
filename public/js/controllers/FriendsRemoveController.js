@@ -11,6 +11,7 @@ angular.module("expensesApp").controller("FriendsRemoveController", ['$scope', '
 				if(result.error == null){
 					$('#ViewFriend').modal('hide')
 					$rootScope.refreshFriends()
+					$location.path('#/')
 				}
 			})
 		}}

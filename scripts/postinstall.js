@@ -7,3 +7,6 @@ function puts(error, stdout, stderr) {
 // Liste des commandes
 exec("bower install", puts)
 exec("mongoimport --db oumaziz_web --collection demo demo.json", puts)
+
+// mongoexport --db oumaziz_web --collection groups --out groups.json
+// mongoimport --db test --collection test_collection_groups --file groups.json
