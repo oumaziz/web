@@ -58,6 +58,23 @@ $scope.changePseudo = function(friend) {
                
 
     }
+
+    $scope.changeEmail = function(friend) {
+       
+                                
+                 for(var j=0; j <$scope.Listefriends.length; j++ ) {
+                                    if(friend.email==$scope.Listefriends[j].email) 
+                                         {
+                                           friend.email=null;
+
+                                 Notification.error({message: "Vous êtes déjà ami !!", positionY: 'bottom', positionX: 'right'});
+                           
+                                         }
+                                       
+                                }
+               
+
+    }
  $scope.update = function() {
   $scope.friendsUpdate.$save(function(result){
 
