@@ -42,7 +42,22 @@ angular.module("expensesApp").controller("FriendsController", ['$scope', '$resou
    });
  }
 
+$scope.changePseudo = function(friend) {
+       
+                                
+                 for(var j=0; j <$scope.Listefriends.length; j++ ) {
+                                    if(friend.pseudo==$scope.Listefriends[j].pseudo) 
+                                         {
+                                           friend.pseudo=null;
 
+                                 Notification.error({message: "Ce pseudo existe deja", positionY: 'bottom', positionX: 'right'});
+                           
+                                         }
+                                       
+                                }
+               
+
+    }
  $scope.update = function() {
   $scope.friendsUpdate.$save(function(result){
 
