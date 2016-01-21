@@ -5,7 +5,7 @@
 Afin que ce projet puisse fonctionner sur votre serveur vous aurez besoin de :
 - NodeJS
 - MongoDB
-- Brew 
+- Bower 
 
 Après avoir au préalable lancé mongodb dans une console, veuillez vous rendre dans le dossier du projet
 puis saisir les commandes suivantes : 
