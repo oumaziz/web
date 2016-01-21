@@ -29,7 +29,7 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<!--<li> <a href="" ng-click="GroupView(group)" data-toggle="modal" data-target="#ViewGroup">{{group.nameGroupe}}</a></li>-->
-				<h4>Historique de <b>{{GroupAccount.nameGroupe}}</b><a href="" class="btn btn-success pull-right btn-adapt" ng-click="GroupView(GroupAccount)" data-toggle="modal" data-target="#ViewGroup">Modifier</a>
+				<h4>Historique de <b>{{GroupAccount.nameGroupe}}</b><a href="" ng-controller="GroupsRemoveController" class="btn btn-danger pull-right btn-adapt" ng-click="removeGroup(GroupAccount)" >Supprimer</a><a href="" class="btn btn-success pull-right btn-adapt" ng-click="GroupView(GroupAccount)" data-toggle="modal" data-target="#ViewGroup">Modifier</a>
 
 				<div class="modal fade" id="ViewGroup" ng-show="boole" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 											<div class="modal-dialog" role="document">
@@ -67,7 +67,7 @@
 
 
 																					<button class="btn btn-lg btn-primary btn-block" type="submit">Modifier</button>
-																					<button class="btn btn-lg btn-primary btn-block" ng-controller="GroupsRemoveController" type="button"  ng-click=removeGroup(groupsUpdate.CurrentGroup);>Supprimer</button>
+																					
 																				</form>
 																			</div>
 																		</div>
