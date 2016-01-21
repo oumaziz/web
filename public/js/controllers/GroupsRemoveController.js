@@ -6,13 +6,14 @@ angular.module("expensesApp").controller("GroupsRemoveController", ['$scope', '$
 		$scope.groupsRemove = new GroupsRemove();
 
 		$scope.removeGroup = function(CurrentGr) {
+			  if (confirm("Vous désirez vraiment supprimer ce groupe?")) {
 			GroupsRemove.remove({idG : CurrentGr._id},function(result){
 				if(result.error == null){
 					$('#ViewGroup').modal('hide')
         			$rootScope.refreshGroups()
 				}
 			})
-		}
+		}}
 
 
 	}]);
