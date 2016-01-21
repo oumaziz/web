@@ -29,7 +29,7 @@
 		<div class="col-md-9">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h4>Historique avec <b>{{FriendAccount.pseudo}}</b><a href="" class="btn btn-success pull-right btn-adapt" ng-click="FriendView(FriendAccount)" data-toggle="modal" data-target="#ViewFriend">Modifier</a></h4>
+					<h4>Historique avec <b>{{FriendAccount.pseudo}}</b><a href="" class="btn btn-danger  pull-right btn-adapt" ng-controller="FriendsRemoveController"   ng-click="removeFriend(FriendAccount)">Supprimer</a><a href="" class="btn btn-success pull-right btn-adapt" ng-click="FriendView(FriendAccount)" data-toggle="modal" data-target="#ViewFriend">Modifier</a></h4>
 
 					<div class="modal fade" id="ViewFriend" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" >
 						<div class="modal-dialog" role="document">
@@ -53,7 +53,7 @@
 										</span> 	
 										<br>
 										<button class="btn btn-lg btn-primary btn-block"  type="submit">Modifier</button>
-										<button class="btn btn-lg btn-primary btn-block" ng-controller="FriendsRemoveController" type="button"  ng-click=removeFriend(FriendAccount);>Supprimer</button>
+										
 									</form>										
 								</div>
 							</div>
