@@ -1,0 +1,4 @@
+{"_id":{"$oid":"56a0ad4d787518fd108e6a67"},"email":"demo@demo.com","password":"c514c91e4ed341f263e458d44b3bb0a7","pseudo":"DemoDemo"}
+{"_id":{"$oid":"56a0ad67787518fd108e6a68"},"email":"mira@mira.com","password":"0ca9deeede136f61f21d948aee4634c7","pseudo":"Mira"}
+{"_id":{"$oid":"56a0ad76787518fd108e6a69"},"email":"med@med.com","password":"ee3eefaf75816178a42c80cb229c131a","pseudo":"Mohamed"}
+{"_id":{"$oid":"56a0ad82787518fd108e6a6a"},"email":"salim@salim.com","password":"2098261c550da56d11ee3cfad5bc465c","pseudo":"salim"}
