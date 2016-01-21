@@ -36,6 +36,7 @@ MongoClient.connect(url, function(err, db) {
 
     db.collection("users", function(err, users) {
     	global.users = users
+    	global.err = err
 
 		app.post('/users/register', user.add);
 		app.post('/users/login', user.connect);
@@ -48,6 +49,7 @@ MongoClient.connect(url, function(err, db) {
 
     db.collection("groups", function(err, groups) {
     	global.groups = groups
+    	global.err = err
 
 		app.get('/users/groups', group.show);
 		app.post('/users/groups', group.add);
@@ -58,6 +60,7 @@ MongoClient.connect(url, function(err, db) {
 
     db.collection("friends", function(err, friends) {
     	global.friends = friends
+    	global.err = err
 
 		app.post('/users/friends/expenses', expense.friend)
     });
