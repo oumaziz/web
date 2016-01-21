@@ -19,7 +19,7 @@ angular.module("expensesApp").controller("GroupsController", ['$scope', '$resour
     }
     
     $rootScope.refreshGroups()
-
+    var nombre;
      $scope.groups.membres = [];
         $scope.groups.membres[0] = {
             pseudo:$rootScope.currentUser.pseudo,
@@ -62,7 +62,8 @@ $scope.groupsUpdate.CurrentGroup=group;
     }
 
     $scope.removeGroup = function(group) {
-      if(nombre> 3){
+    
+    if(nombre> 3){
             var index2 = $scope.groupsUpdate.CurrentGroup.membres.indexOf(group);
             
             $scope.groupsUpdate.CurrentGroup.membres.splice(index2,1)
@@ -72,6 +73,9 @@ $scope.groupsUpdate.CurrentGroup=group;
         } else {
             Notification.error({message: "il faut au moin 2 membres", positionY: 'bottom', positionX: 'right'});
         }
+  
+ 
+      
 
     };
 
@@ -80,7 +84,7 @@ $scope.groupsUpdate.CurrentGroup=group;
             var temp2=true;
             for(var i=0; i < $scope.groups.membres.length; i++ ) {
                         if($scope.groups.membres[i]!=membre){
-                             if($scope.groups.membres[i].pseudo == membre.pseudo){
+                             if($scope.groups.membres[i].pseudo == membre.pseudo && membre.pseudo!=null){
                                 temp=false
                                 membre.pseudo=null;
 
@@ -117,7 +121,7 @@ $scope.groupsUpdate.CurrentGroup=group;
                          }
             
         }
-        
+
     $scope.changePseudoUpdateGroup = function(member) {
 
      
